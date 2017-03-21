@@ -40,5 +40,8 @@
         "phpstan/phpstan": "^0.6.4",
         "phpmd/phpmd": "@stable"
     },
+    "config": {
+        "preferred-install": "dist"
+    },
     "minimum-stability": "stable"
 }
