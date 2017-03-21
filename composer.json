@@ -1,0 +1,43 @@
+{
+    "name": "1giba/datalayer",
+    "description": "A simplest abstraction for eloquent models",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+      "repository",
+      "datalayer",
+      "models",
+      "laravel",
+      "lumen",
+      "eloquent"
+    ],
+    "authors": [
+        {
+            "name": "Gilberto Junior",
+            "email": "olamundo@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "OneGiba\\DataLayer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/TestBase.php",
+            "tests/TestRepository.php",
+            "tests/TestPostgresRepository.php"
+        ]
+    },
+    "require": {
+        "illuminate/database": "5.1.* || 5.2.* || 5.3.* || 5.4.*",
+        "fzaninotto/faker": "^1.6"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.0",
+        "phpunit/phpunit": "~5.0",
+        "mockery/mockery": "^0.9.8",
+        "phpstan/phpstan": "^0.6.4",
+        "phpmd/phpmd": "@stable"
+    }
+}
