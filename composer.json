@@ -39,5 +39,6 @@
         "mockery/mockery": "^0.9.8",
         "phpstan/phpstan": "^0.6.4",
         "phpmd/phpmd": "@stable"
-    }
+    },
+    "minimum-stability": "stable"
 }
