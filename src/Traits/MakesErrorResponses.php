@@ -2,25 +2,12 @@
 
 namespace OneGiba\DataLayer\Traits;
 
-use OneGiba\DataLayer\Exceptions\NotFoundException;
 use OneGiba\DataLayer\Exceptions\OnCreatingException;
 use OneGiba\DataLayer\Exceptions\OnDeletingException;
 use OneGiba\DataLayer\Exceptions\OnUpdatingException;
 
 trait MakesErrorResponses
 {
-    /**
-     * Throws Not Found Exception
-     *
-     * @param array $errors
-     * @param null|string $message
-     * @throws \OneGiba\DataLayer\Exceptions\NotFoundException
-     */
-    public function throwErrorNotFound($errors = [], $message = null)
-    {
-        throw new NotFoundException($errors, $message);
-    }
-
     /**
      * Throws On Creating Exception
      *

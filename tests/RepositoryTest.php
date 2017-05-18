@@ -5,7 +5,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassAssignmentException;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use OneGiba\DataLayer\Exceptions\NotFoundException;
 use OneGiba\DataLayer\Exceptions\OnCreatingException;
 use OneGiba\DataLayer\Exceptions\OnDeletingException;
 use OneGiba\DataLayer\Exceptions\OnUpdatingException;
@@ -20,45 +19,9 @@ class RepositoryTest extends TestBase
         $this->repository = new TestRepository($this->model);
     }
 
-    public function testFindAllAndRaisesAnException()
-    {
-        $collection = Mockery::mock(Collection::class);
-        $collection
-            ->shouldReceive('isEmpty')
-            ->once()
-            ->andReturn(true);
-
-        $builder = Mockery::mock(Builder::class);
-        $builder
-            ->shouldReceive('select')
-            ->with(['*'])
-            ->once()
-            ->andReturn($builder);
-        $builder
-            ->shouldReceive('orderBy')
-            ->with('id', 'ASC')
-            ->once()
-            ->andReturn($builder);
-        $builder
-            ->shouldReceive('get')
-            ->once()
-            ->andReturn($collection);
-
-        $this->model
-            ->shouldReceive('newQuery')
-            ->once()
-            ->andReturn($builder);
-
-        $this->setExpectedException(NotFoundException::class);
-        $this->repository->findAll();
-    }
     public function testFindAllAndReturnsACollection()
     {
         $collection = Mockery::mock(Collection::class);
-        $collection
-            ->shouldReceive('isEmpty')
-            ->once()
-            ->andReturn(false);
 
         $builder = Mockery::mock(Builder::class);
         $builder
@@ -84,7 +47,7 @@ class RepositoryTest extends TestBase
         $this->assertInstanceOf(Collection::class, $this->repository->findAll());
     }
 
-    public function testFindFirstAndRaisesAnException()
+    public function testFindFirstAndReturnsNull()
     {
         $email = $this->faker->email;
 
@@ -109,9 +72,7 @@ class RepositoryTest extends TestBase
             ->once()
             ->andReturn($builder);
 
-
-        $this->setExpectedException(NotFoundException::class);
-        $this->repository->findFirst(['email' => $email]);
+        $this->assertNull($this->repository->findFirst(['email' => $email]));
     }
 
     public function testFindFirstAndReturnsAnObject()
@@ -144,7 +105,7 @@ class RepositoryTest extends TestBase
         ]));
     }
 
-    public function testFindByIdAndRaisesAnException()
+    public function testFindByIdAndReturnsNull()
     {
         $resourceId = $this->faker->numberBetween(100, 999);
 
@@ -154,8 +115,7 @@ class RepositoryTest extends TestBase
             ->once()
             ->andReturn(null);
 
-        $this->setExpectedException(NotFoundException::class);
-        $this->repository->findById($resourceId);
+        $this->assertNull($this->repository->findById($resourceId));
     }
 
     public function testFindByIdAndReturnsAnObject()
@@ -171,57 +131,11 @@ class RepositoryTest extends TestBase
         $this->assertInstanceOf(Model::class, $this->repository->findById($resourceId));
     }
 
-    public function testFindByAndRaisesAnException()
-    {
-        $email = $this->faker->email;
-
-        $collection = Mockery::mock(Collection::class);
-        $collection
-            ->shouldReceive('isEmpty')
-            ->once()
-            ->andReturn(true);
-
-        $builder = Mockery::mock(Builder::class);
-        $builder
-            ->shouldReceive('select')
-            ->with(['*'])
-            ->once()
-            ->andReturn($builder);
-        $builder
-            ->shouldReceive('where')
-            ->with('email', $email)
-            ->once()
-            ->andReturn($builder);
-        $builder
-            ->shouldReceive('orderBy')
-            ->with('id', 'ASC')
-            ->once()
-            ->andReturn($builder);
-        $builder
-            ->shouldReceive('get')
-            ->once()
-            ->andReturn($collection);
-
-        $this->model
-            ->shouldReceive('newQuery')
-            ->once()
-            ->andReturn($builder);
-
-        $this->setExpectedException(NotFoundException::class);
-        $this->repository->findBy([
-            'email' => $email,
-        ]);
-    }
-
     public function testFindByReturnsAnObject()
     {
         $email = $this->faker->email;
 
         $collection = Mockery::mock(Collection::class);
-        $collection
-            ->shouldReceive('isEmpty')
-            ->once()
-            ->andReturn(false);
 
         $builder = Mockery::mock(Builder::class);
         $builder
@@ -327,7 +241,7 @@ class RepositoryTest extends TestBase
         $this->assertInstanceOf(Model::class, $this->repository->create($data));
     }
 
-    public function testUpdateNotFound()
+    public function testUpdateReturnsFalse()
     {
         $resourceId = $this->faker->numberBetween(100, 999);
 
@@ -337,8 +251,7 @@ class RepositoryTest extends TestBase
             ->once()
             ->andReturn(null);
 
-        $this->setExpectedException(NotFoundException::class);
-        $this->repository->update([], $resourceId);
+        $this->assertFalse($this->repository->update([], $resourceId));
     }
 
     public function testUpdateRaisesAnException()

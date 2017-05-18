@@ -8,20 +8,58 @@
 $ composer require 1giba/datalayer
 ```
 
-## PSR-2
+## Basic Usage
 
-```sh
-$ ./vendor/bin/php-cs-fixer fix ./src
+```php
+<?php
+
+use OneGiba\Datalayer\Repository;
+use App\User;
+
+// Create a user repository class extends base repository
+class UserRepository extends Repository
+{
+    public function __construct(User $user)
+    {
+        parent::__construct($user);
+    }
+}
+
+// Instanciates the user repository
+$userRepository = new UserRepository(new User);
+$user = $userRepository->findById(1234);
+
+echo $user->name . PHP_EOL;
+echo $user->email;
 ```
 
-## PHPStan
+## Interface
 
-```sh
-$ ./vendor/bin/phpstan analyse -l 4 -c phpstan.neon src
+```php
+<?php
+
+namespace OneGiba\DataLayer\Contracts;
+
+interface RepositoryInterface
+{
+    public function findAll(array $columns = ['*'], array $sortableFields = ['id'], $limit = 0);
+
+    public function findFirst(array $conditions = [], $columns = ['*']);
+
+    public function findById($resourceId, $columns = ['*']);
+
+    public function findBy(array $conditions, array $columns = ['*'], array $sortableFields = ['id'], $limit = 0);
+
+    public function paginate($perPage, array $conditions = [], array $columns = ['*'], array $sortableFields = ['id']);
+
+    public function create(array $data);
+
+    public function update(array $data, $resourceId);
+
+    public function delete($resourceId);
+}
 ```
 
-## PHPMD
+## License
 
-```sh
-$ ./vendor/bin/phpmd ./src text cleancode,codesize,controversial,design,naming,unusedcode
-```
+Datalayer is released under the MIT Licence.

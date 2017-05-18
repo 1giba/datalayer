@@ -39,22 +39,11 @@ abstract class Repository implements RepositoryInterface
         array $sortableFields = ['id'],
         $limit = 0
     ) {
-        $collection = $this->query($this->model)
+        return $this->query($this->model)
             ->select($columns)
             ->orderBy($sortableFields)
             ->limit($limit)
             ->get();
-
-        if ($collection->isEmpty()) {
-            $this->throwErrorNotFound([
-                'method'         => __METHOD__,
-                'columns'        => $columns,
-                'sortableFields' => $sortableFields,
-                'limit'          => $limit,
-            ]);
-        }
-
-        return $collection;
     }
 
     /**
@@ -62,24 +51,13 @@ abstract class Repository implements RepositoryInterface
      *
      * @param array $conditions
      * @return \Illuminate\Database\Eloquent\Model
-     * @throws \OneGiba\DataLayer\Exceptions\NotFoundException
      */
     public function findFirst(array $conditions = [], $columns = ['*'])
     {
-        $model = $this->query($this->model)
+        return $this->query($this->model)
             ->select($columns)
             ->apply($conditions)
             ->first();
-
-        if (! $model) {
-            $this->throwErrorNotFound([
-                'method'     => __METHOD__,
-                'conditions' => $conditions,
-                'columns'    => $columns,
-            ]);
-        }
-
-        return $model;
     }
 
     /**
@@ -88,21 +66,10 @@ abstract class Repository implements RepositoryInterface
      * @param integer $resourceId
      * @param array $columns
      * @return \Illuminate\Database\Eloquent\Model
-     * @throws \OneGiba\DataLayer\Exceptions\NotFoundException
      */
     public function findById($resourceId, $columns = ['*'])
     {
-        $model = $this->model->find($resourceId, $columns);
-
-        if (! $model) {
-            $this->throwErrorNotFound([
-                'method'     => __METHOD__,
-                'resourceId' => $resourceId,
-                'columns'    => $columns,
-            ]);
-        }
-
-        return $model;
+        return $this->model->find($resourceId, $columns);
     }
 
     /**
@@ -120,23 +87,11 @@ abstract class Repository implements RepositoryInterface
         array $sortableFields = ['id'],
         $limit = 0
     ) {
-        $collection = $this->query($this->model)
+        return $this->query($this->model)
             ->select($columns)
             ->apply($conditions)
             ->orderBy($sortableFields)
             ->get();
-
-        if ($collection->isEmpty()) {
-            $this->throwErrorNotFound([
-                'method'         => __METHOD__,
-                'conditions'     => $conditions,
-                'columns'        => $columns,
-                'sortableFields' => $sortableFields,
-                'limit'          => $limit,
-            ]);
-        }
-
-        return $collection;
     }
 
     /**
@@ -190,6 +145,10 @@ abstract class Repository implements RepositoryInterface
     public function update(array $data, $resourceId)
     {
         $model = $this->findById($resourceId);
+
+        if (!$model) {
+            return false;
+        }
 
         try {
             return $model->fill($data)->save();
