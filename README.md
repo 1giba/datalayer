@@ -16,7 +16,7 @@ $ composer require 1giba/datalayer
 use OneGiba\Datalayer\Repository;
 use App\User;
 
-// Create a user repository class extends base repository
+// Creates an user repository class extends datalayer repository
 class UserRepository extends Repository
 {
     public function __construct(User $user)
@@ -27,8 +27,11 @@ class UserRepository extends Repository
 
 // Instanciates the user repository
 $userRepository = new UserRepository(new User);
+
+// Find an user by id
 $user = $userRepository->findById(1234);
 
+// Show results
 echo $user->name . PHP_EOL;
 echo $user->email;
 ```
