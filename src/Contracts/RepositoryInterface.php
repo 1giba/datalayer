@@ -2,93 +2,57 @@
 
 namespace OneGiba\DataLayer\Contracts;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+
 interface RepositoryInterface
 {
     /**
-     * Get all rows
+     * First row
      *
-     * @param array   $columns
-     * @param array   $sortableFields
-     * @param integer $limit
+     * @param array $conditions
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function first(array $conditions = []): ?Model;
+
+    /**
+     * Get collection
+     *
      * @return \Illuminate\Support\Collection
      */
-    public function findAll(
-        array $columns = ['*'],
-        array $sortableFields = ['id'],
-        $limit = 0
-    );
+    public function get(): Collection;
 
     /**
-     * Get the first row
+     * Paginate data
      *
-     * @param array $conditions
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param int $perPage
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function findFirst(array $conditions = [], $columns = ['*']);
+    public function paginate(int $perPage = 50): LengthAwarePaginator;
 
     /**
-     * Find by ID
+     * New entry
      *
-     * @param integer $resourceId
-     * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param array $fillable
+     * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function findById($resourceId, $columns = ['*']);
+    public function create(array $fillable): ?Model;
 
     /**
-     * Find by...
+     * Updates data
      *
-     * @param array $conditions
-     * @param array $columns
-     * @param array $sortableFields
-     * @param integer $limit
-     * @return \Illuminate\Support\Collection
+     * @param array $fillable
+     * @param int $resourceId
+     * @return mixed
      */
-    public function findBy(
-        array $conditions,
-        array $columns = ['*'],
-        array $sortableFields = ['id'],
-        $limit = 0
-    );
+    public function update(array $fillable, int $resourceId);
 
     /**
-     * Paginate results
+     * Removes data
      *
-     * @param integer $perPage
-     * @param array $conditions
-     * @param array $columns
-     * @param array $sortableFields
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @param int $resourceId
+     * @return int
      */
-    public function paginate(
-        $perPage,
-        array $conditions = [],
-        array $columns = ['*'],
-        array $sortableFields = ['id']
-    );
-
-    /**
-     * Create a record
-     *
-     * @param array $data
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function create(array $data);
-
-    /**
-     * Update data
-     *
-     * @param array   $data
-     * @param integer $resourceId
-     * @return boolean
-     */
-    public function update(array $data, $resourceId);
-
-    /**
-     * Delete row
-     *
-     * @param mixed $resourceId
-     * @return integer
-     */
-    public function delete($resourceId);
+    public function delete(int $resourceId): int;
 }

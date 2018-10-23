@@ -19,17 +19,17 @@ use App\User;
 // Creates an user repository class extends datalayer repository
 class UserRepository extends Repository
 {
-    public function __construct(User $user)
+    public function model(): string
     {
-        parent::__construct($user);
+        return User::class;
     }
 }
 
 // Instanciates the user repository
-$userRepository = new UserRepository(new User);
+$userRepository = new UserRepository;
 
 // Find an user by id
-$user = $userRepository->findById(1234);
+$user = $userRepository->find(1234);
 
 // Show results
 echo $user->name . PHP_EOL;
@@ -45,21 +45,53 @@ namespace OneGiba\DataLayer\Contracts;
 
 interface RepositoryInterface
 {
-    public function findAll(array $columns = ['*'], array $sortableFields = ['id'], $limit = 0);
+    /**
+     * First row
+     *
+     * @param array $conditions
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function first(array $conditions = []): ?Model;
 
-    public function findFirst(array $conditions = [], $columns = ['*']);
+    /**
+     * Get collection
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function get(): Collection;
 
-    public function findById($resourceId, $columns = ['*']);
+    /**
+     * Paginate data
+     *
+     * @param int $perPage
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function paginate(int $perPage = 50): LengthAwarePaginator;
 
-    public function findBy(array $conditions, array $columns = ['*'], array $sortableFields = ['id'], $limit = 0);
+    /**
+     * New entry
+     *
+     * @param array $fillable
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function create(array $fillable): ?Model;
 
-    public function paginate($perPage, array $conditions = [], array $columns = ['*'], array $sortableFields = ['id']);
+    /**
+     * Updates data
+     *
+     * @param array $fillable
+     * @param int $resourceId
+     * @return mixed
+     */
+    public function update(array $fillable, int $resourceId);
 
-    public function create(array $data);
-
-    public function update(array $data, $resourceId);
-
-    public function delete($resourceId);
+    /**
+     * Removes data
+     *
+     * @param int $resourceId
+     * @return int
+     */
+    public function delete(int $resourceId): int;
 }
 ```
 

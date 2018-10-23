@@ -22,23 +22,9 @@
             "OneGiba\\DataLayer\\": "src/"
         }
     },
-    "autoload-dev": {
-        "classmap": [
-            "tests/TestBase.php",
-            "tests/TestRepository.php",
-            "tests/TestPostgresRepository.php"
-        ]
-    },
     "require": {
-        "illuminate/database": "5.1.* || 5.2.* || 5.3.* || 5.4.* || 5.5.* || 5.6.*",
+        "illuminate/database": "5.1.* || 5.2.* || 5.3.* || 5.4.* || 5.5.* || 5.6.* || 5.7.*",
         "fzaninotto/faker": "^1.6"
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.11",
-        "phpunit/phpunit": "~5.0",
-        "mockery/mockery": "^0.9.8",
-        "phpstan/phpstan": "^0.6.4",
-        "phpmd/phpmd": "@stable"
     },
     "config": {
         "preferred-install": "dist"

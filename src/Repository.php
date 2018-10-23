@@ -2,179 +2,315 @@
 
 namespace OneGiba\DataLayer;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use OneGiba\DataLayer\Contracts\RepositoryInterface;
-use OneGiba\DataLayer\Traits\Querialize;
-use OneGiba\DataLayer\Traits\MakesErrorResponses;
-use Exception;
 
 abstract class Repository implements RepositoryInterface
 {
-    use Querialize, MakesErrorResponses;
+    /**
+     * @const string
+     */
+    const QUERY_STRING_ATTR = 'attr';
+    /**
+     * @const string
+     */
+    const QUERY_STRING_SORT = 'sort';
 
     /**
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var \Illuminate\Database\Eloquent\Model|null
      */
     protected $model;
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * LIKE clausule
+     *
+     * @var array
+     */
+    protected $partials = [];
+
+    /**
+     * Allowed sort fields
+     *
+     * @var array
+     */
+    protected $allowedSorts = [];
+
+    /**
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**     * @var array
+     */
+    protected $customFilters = [];
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model|null $model
      * @return void
      */
-    public function __construct(Model $model)
+    public function __construct(?Model $model = null)
     {
-        $this->model = $model;
+        $this->model = $model ?? app($this->model())->make();
     }
 
     /**
-     * Get all rows
+     * Returns model class name
      *
-     * @param array   $columns
-     * @param array   $sortableFields
-     * @param integer $limit
-     * @return \Illuminate\Support\Collection
+     * @return string
      */
-    public function findAll(
-        array $columns = ['*'],
-        array $sortableFields = ['id'],
-        $limit = 0
-    ) {
-        return $this->query($this->model)
-            ->select($columns)
-            ->orderBy($sortableFields)
-            ->limit($limit)
+    public abstract function model(): string;
+
+    /**
+     * Returns Builder
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function query(): Builder
+    {
+        if (! $this->model instanceof Builder) {
+            return $this->model->newQuery();
+        }
+
+        return $this->model;
+    }
+
+    /**
+     * Basic search
+     *
+     * @param int $resourceId
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function find(int $resourceId): ?Model
+    {
+        return $this->query()->find($resourceId);
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function first(array $conditions = []): ?Model
+    {
+        $model = $this->query();
+
+        foreach ($conditions as $column => $value) {
+            $model = $model->where($column, $value);
+        }
+
+        return $model->first();
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function get(): Collection
+    {
+        return $this->query()
             ->get();
     }
 
     /**
-     * Get the first row
-     *
-     * @param array $conditions
-     * @return \Illuminate\Database\Eloquent\Model
+     * { @inheritdoc }
      */
-    public function findFirst(array $conditions = [], $columns = ['*'])
+    public function paginate(int $perPage = 50): LengthAwarePaginator
     {
-        return $this->query($this->model)
-            ->select($columns)
-            ->apply($conditions)
-            ->first();
-    }
-
-    /**
-     * Find by ID
-     *
-     * @param integer $resourceId
-     * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function findById($resourceId, $columns = ['*'])
-    {
-        return $this->model->find($resourceId, $columns);
-    }
-
-    /**
-     * Find by...
-     *
-     * @param array $conditions
-     * @param array $columns
-     * @param array $sortableFields
-     * @param integer $limit
-     * @return \Illuminate\Support\Collection
-     */
-    public function findBy(
-        array $conditions,
-        array $columns = ['*'],
-        array $sortableFields = ['id'],
-        $limit = 0
-    ) {
-        return $this->query($this->model)
-            ->select($columns)
-            ->apply($conditions)
-            ->orderBy($sortableFields)
-            ->get();
-    }
-
-    /**
-     * Paginate results
-     *
-     * @param integer $perPage
-     * @param array $conditions
-     * @param array $columns
-     * @param array $sortableFields
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    public function paginate(
-        $perPage,
-        array $conditions = [],
-        array $columns = ['*'],
-        array $sortableFields = ['id']
-    ) {
-        return $this->query($this->model)
-            ->select($columns)
-            ->apply($conditions)
-            ->orderBy($sortableFields)
+        return $this->query()
             ->paginate($perPage);
     }
 
     /**
-     * Create a record
-     *
-     * @param array $data
-     * @return \Illuminate\Database\Eloquent\Model
-     * @throws \OneGiba\DataLayer\Exceptions\OnCreatingException
+     * { @inheritdoc }
      */
-    public function create(array $data)
+    public function create(array $fillable): ?Model
     {
-        try {
-            return $this->model->create($data);
-        } catch (Exception $error) {
-            $this->throwErrorOnCreating([
-                'data' => $data,
-            ], $error->getMessage());
-        }
+        return $this->model->create($fillable);
     }
 
     /**
-     * Update data
-     *
-     * @param array   $data
-     * @param integer $resourceId
-     * @return boolean
-     * @throws \OneGiba\DataLayer\Exceptions\OnUpdatingException
+     * { @inheritdoc }
      */
-    public function update(array $data, $resourceId)
+    public function update(array $fillable, int $resourceId)
     {
-        $model = $this->findById($resourceId);
-
-        if (!$model) {
-            return false;
-        }
-
-        try {
-            return $model->fill($data)->save();
-        } catch (Exception $error) {
-            $this->throwErrorOnUpdating([
-                'data'        => $data,
-                'resource_id' => $resourceId,
-            ], $error->getMessage());
-        }
+        return ! $resource->fill($fillable)->save() ?? $resource;
     }
 
     /**
-     * Delete row
-     *
-     * @param mixed $resourceId
-     * @return integer
-     * @throws \OneGiba\DataLayer\Exceptions\OnDeletingException
+     * { @inheritdoc }
      */
-    public function delete($resourceId)
+    public function delete(int $resourceId): int
     {
-        try {
-            return $this->model->destroy($resourceId);
-        } catch (Exception $error) {
-            $this->throwErrorOnDeleting([
-                'resource_id' => $resourceId,
-            ], $error->getMessage());
+        return $this->model->destroy($resourceId);
+    }
+
+    /**
+     * Filtros com LIKE
+     *
+     * @param string $attribute
+     * @return $this
+     */
+    public function addPartialSearch(string $attribute): self
+    {
+        if (! in_array($attribute, $this->partials)) {
+            $this->partials[] = $attribute;
         }
+
+        return $this;
+    }
+
+    /**
+     * @param array $params
+     * @return $this
+     */
+    public function filter(array $params = []): self
+    {
+        foreach ($params as $param => $value) {
+            if (is_null($value)) {
+                continue;
+            }
+
+            if ($param === self::QUERY_STRING_ATTR) {
+                $this->selectFields($value);
+                continue;
+            }
+
+            if ($param === self::QUERY_STRING_SORT) {
+                $this->model = $this->applySorting($value);
+                continue;
+            }
+
+            if (isset($this->customFilters[$param])) {
+                $this->model = $this->applyCustomFilters($param, $value);
+                continue;
+            }
+
+            if (isset($this->attributes[$param])) {
+                $param = $this->attributes[$param];
+            }
+
+            if (is_array($value)) {
+                $this->model = $this->query()->whereIn($param, $value);
+                continue;
+            }
+
+            $values = explode(',', $value);
+            if (count($values) === 1) {
+                if (in_array($param, $this->partials)) {
+                    $this->model = $this->query()->where($param, 'ILIKE', '%' . $value . '%');
+                    continue;
+                }
+                $this->model = $this->query()->where($param, $value);
+                continue;
+            }
+
+            $this->model = $this->query()->whereIn($param, $values);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $attributes
+     * @return $this
+     */
+    public function selectFields(string $attributes): self
+    {
+        $this->model = $this->query()
+            ->select(explode(',', $attributes));
+        return $this;
+    }
+
+    /**
+     * @param string $sortFields
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function applySorting(string $sortFields): Builder
+    {
+        $model  = $this->query();
+        $fields = explode(',', $sortFields);
+        foreach ($fields as $field) {
+            $hasPrefix      = substr($field, 0, 1) === '-';
+            $field          = $hasPrefix ? substr($field, 1) : $field;
+            $orientation    = $hasPrefix ? 'DESC' : 'ASC';
+
+            if (count($this->allowedSorts) > 0 &&
+                ! in_array($field, $this->allowedSorts)) {
+                continue;
+            }
+            $model = $model->orderBy($field, $orientation);
+        }
+        return $model;
+    }
+
+    /**
+     * @param array $relationships
+     * @return $this
+     */
+    public function with(array $relationships): self
+    {
+        $this->model = $this->query()->with($relationships);
+
+        return $this;
+    }
+
+    /**
+     * @return void
+     */
+    public function debug()
+    {
+        dd($this->query()->toSql());
+    }
+
+    /**
+     * @param array $fields
+     * @return $this
+     */
+    public function allowedSorts(array $fields): self
+    {
+        $this->allowedSorts = $fields;
+
+        return $this;
+    }
+
+    /**
+     * Referencia o campo
+     *
+     * @param string $alias
+     * @param string $fieldname
+     * @return $this
+     */
+    public function refer(string $alias, string $fieldname): self
+    {
+        $this->attributes[$alias] = $fieldname;
+
+        return $this;
+    }
+
+    /**
+     * Adiciona filtros customizados
+     *
+     * @param array $filters
+     * @return $this
+     */
+    public function addCustomFilters(array $filters): self
+    {
+        $this->customFilters = $filters;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $param
+     * @param mixed $value
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function applyCustomFilters($param, $value): Builder
+    {
+        if (!isset($this->customFilters[$param][$value])) {
+            return $this->query();
+        }
+
+        return $this->query()->whereRaw($this->customFilters[$param][$value]);
     }
 }

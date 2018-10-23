@@ -1,4 +1,0 @@
-parameters:
-    ignoreErrors:
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Builder::[a-zA-Z0-9\\_]+\(\)#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Model::[a-zA-Z0-9\\_]+\(\)#'
