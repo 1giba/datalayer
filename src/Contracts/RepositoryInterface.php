@@ -15,7 +15,7 @@ interface RepositoryInterface
      * @param array $conditions
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function first(array $columns = ['*'], array $conditions = []): ?Model;
+    public function first(array $columns = ['*']): ?Model;
 
     /**
      * Get collection

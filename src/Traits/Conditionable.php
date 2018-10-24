@@ -210,7 +210,7 @@ trait Conditionable
      * @param mixed  $value
      * @return $this
      */
-    public function whereNot(string $column, $value): self
+    public function orWhereNot(string $column, $value): self
     {
         $model = $this->query();
         if (is_array($value)) {

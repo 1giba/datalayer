@@ -55,17 +55,9 @@ abstract class Repository implements RepositoryInterface
     /**
      * { @inheritdoc }
      */
-    public function first(
-        array $columns = ['*'],
-        array $conditions = []
-    ): ?Model {
-        $model = $this->query();
-
-        foreach ($conditions as $column => $value) {
-            $model = $model->where($column, $value);
-        }
-
-        return $model->first();
+    public function first(array $columns = ['*']): ?Model {
+        return $this->query()
+            ->first($columns);
     }
 
     /**
