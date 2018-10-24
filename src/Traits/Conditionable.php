@@ -83,7 +83,10 @@ trait Conditionable
     public function whereBetween(string $column, $from, $until): self
     {
         $model = $this->query();
-        $this->model = $model->whereBetween($column, $from, $until);
+        $this->model = $model->whereBetween($column, [
+            $from,
+            $until,
+        ]);
         return $this;
     }
 
@@ -261,7 +264,10 @@ trait Conditionable
     public function orWhereBetween(string $column, $from, $until): self
     {
         $model = $this->query();
-        $this->model = $model->orWhereBetween($column, $from, $until, 'or');
+        $this->model = $model->orWhereBetween($column, [
+                $from,
+                $until,
+            ], 'or');
         return $this;
     }
 
