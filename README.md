@@ -48,10 +48,11 @@ interface RepositoryInterface
     /**
      * First row
      *
+     * @param array $columns
      * @param array $conditions
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function first(array $conditions = []): ?Model;
+    public function first(array $columns = ['*'], array $conditions = []): ?Model;
 
     /**
      * Get collection
