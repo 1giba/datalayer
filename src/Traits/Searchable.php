@@ -4,6 +4,7 @@ namespace OneGiba\DataLayer\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use DB;
 
 trait Searchable
 {
