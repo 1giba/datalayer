@@ -52,16 +52,28 @@ trait Searchable
      * @param array $sortFields
      * @return $this
      */
-    public function orderBy(array $sortFields): self
+    public function orderBy(): self
     {
+        $args = func_get_args();
+        if (empty($args)) {
+            return $this;
+        }
+
         $model = $this->query();
-        foreach ($sortFields as $sortField) {
-            list($column, $orientation) = $sortField;
-            if (! $orientation ||
-                !in_array(strtoupper($orientation), ['ASC', 'DESC'])) {
-                $orientation = 'ASC';
-            }
+        if (count($args) === 2) {
+            list($column, $orientation) = $args;
             $model = $model->orderBy($column, $orientation);
+        } elseif (is_array($args[0])) {
+            foreach ($args as $sortField) {
+                list($column, $orientation) = $sortField;
+                if (! $orientation ||
+                    !in_array(strtoupper($orientation), ['ASC', 'DESC'])) {
+                    $orientation = 'ASC';
+                }
+                $model = $model->orderBy($column, $orientation);
+            }
+        } else {
+            $model = $model->orderBy(DB::raw($args[0]));
         }
         $this->model = $model;
         return $this;
@@ -71,11 +83,21 @@ trait Searchable
      * @param array $sortFields
      * @return $this
      */
-    public function groupBy(array $groupFields): self
+    public function groupBy(): self
     {
+        $args = func_get_args();
+        if (empty($args)) {
+            return $this;
+        }
+
         $model = $this->query();
-        $this->model = $model->groupBy($groupFields);
-        return $model;
+        if (is_array($args[0])) {
+            $model = $model->groupBy($args[0]);
+        } else {
+            $this->model = $model->groupBy(DB::raw($args[0]));
+        }
+        $this->model = $model;
+        return $this;
     }
 
     /**
