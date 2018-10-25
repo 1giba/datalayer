@@ -14,6 +14,13 @@ trait Requestable
     protected $partials = [];
 
     /**
+     * Allowed filter fields
+     *
+     * @var array
+     */
+    protected $allowedFilters = [];
+
+    /**
      * Allowed sort fields
      *
      * @var array
@@ -21,9 +28,19 @@ trait Requestable
     protected $allowedSorts = [];
 
     /**
+     * @var string
+     */
+    protected $sortParam = 'sort';
+
+    /**
      * @var array
      */
-    protected $attributes = [];
+    protected $aliases = [];
+
+    /**
+     * @var string
+     */
+    protected $attributesParam = 'attrs';
 
     /**
      * @var array
@@ -56,12 +73,12 @@ trait Requestable
                 continue;
             }
 
-            if ($param === 'attrs') {
+            if ($param === $this->attributesParam) {
                 $this->model = $this->selectFields($value);
                 continue;
             }
 
-            if ($param === 'sort') {
+            if ($param === $this->sortParam) {
                 $this->model = $this->applySorting($value);
                 continue;
             }
@@ -71,8 +88,12 @@ trait Requestable
                 continue;
             }
 
-            if (isset($this->attributes[$param])) {
-                $param = $this->attributes[$param];
+            if (isset($this->aliases[$param])) {
+                $param = $this->aliases[$param];
+            }
+
+            if (! in_array($param, $this->allowedFilters)) {
+                continue;
             }
 
             if (is_array($value)) {
@@ -123,9 +144,23 @@ trait Requestable
                 ! in_array($field, $this->allowedSorts)) {
                 continue;
             }
+            $field = isset($this->aliases[$field])
+                ? $this->aliases[$field]
+                : $field;
             $model = $model->orderBy($field, $orientation);
         }
         return $model;
+    }
+
+    /**
+     * @param array $fields
+     * @return $this
+     */
+    public function allowedFilters(array $fields): self
+    {
+        $this->allowedFilters = $fields;
+
+        return $this;
     }
 
     /**
@@ -148,7 +183,7 @@ trait Requestable
      */
     public function refer(string $alias, string $fieldname): self
     {
-        $this->attributes[$alias] = $fieldname;
+        $this->aliases[$alias] = $fieldname;
 
         return $this;
     }
@@ -178,5 +213,27 @@ trait Requestable
         }
 
         return $this->query()->whereRaw($this->customFilters[$param][$value]);
+    }
+
+    /**
+     * @param string $param
+     * @return $this
+     */
+    public function changeAttrsParam(string $param): self
+    {
+        $this->attributesParam = $param;
+
+        return $this;
+    }
+
+    /**
+     * @param string $sort
+     * @return $this
+     */
+    public function changeSortParam(string $sort): self
+    {
+        $this->sortParam = $sort;
+
+        return $this;
     }
 }

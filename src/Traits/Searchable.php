@@ -49,12 +49,10 @@ trait Searchable
     }
 
     /**
-     * @param array $sortFields
      * @return $this
      */
-    public function orderBy(): self
+    public function orderBy(...$args): self
     {
-        $args = func_get_args();
         if (empty($args)) {
             return $this;
         }
@@ -62,7 +60,7 @@ trait Searchable
         $model = $this->query();
         if (count($args) === 2) {
             list($column, $orientation) = $args;
-            $model = $model->orderBy($column, $orientation);
+            $model = $model->orderBy(DB::raw($column), $orientation);
         } elseif (is_array($args[0])) {
             foreach ($args as $sortField) {
                 list($column, $orientation) = $sortField;
@@ -70,7 +68,7 @@ trait Searchable
                     !in_array(strtoupper($orientation), ['ASC', 'DESC'])) {
                     $orientation = 'ASC';
                 }
-                $model = $model->orderBy($column, $orientation);
+                $model = $model->orderBy(DB::raw($column), $orientation);
             }
         } else {
             $model = $model->orderBy(DB::raw($args[0]));
@@ -83,18 +81,21 @@ trait Searchable
      * @param array $sortFields
      * @return $this
      */
-    public function groupBy(): self
+    public function groupBy(...$args): self
     {
-        $args = func_get_args();
         if (empty($args)) {
             return $this;
         }
 
         $model = $this->query();
         if (is_array($args[0])) {
-            $model = $model->groupBy($args[0]);
+            $groups = array_map(function ($group) {
+                return DB::raw($group);
+            }, $args[0]);
+
+            $model = $model->groupBy($groups);
         } else {
-            $this->model = $model->groupBy(DB::raw($args[0]));
+            $model = $model->groupBy(DB::raw($args[0]));
         }
         $this->model = $model;
         return $this;

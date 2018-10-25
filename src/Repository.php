@@ -55,7 +55,8 @@ abstract class Repository implements RepositoryInterface
     /**
      * { @inheritdoc }
      */
-    public function first(array $columns = ['*']): ?Model {
+    public function first(array $columns = ['*'])
+    {
         return $this->query()
             ->first($columns);
     }
@@ -81,7 +82,7 @@ abstract class Repository implements RepositoryInterface
     /**
      * { @inheritdoc }
      */
-    public function create(array $fillable): ?Model
+    public function create(array $fillable)
     {
         return $this->model->create($fillable);
     }
