@@ -49,10 +49,9 @@ interface RepositoryInterface
      * First row
      *
      * @param array $columns
-     * @param array $conditions
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return mixed
      */
-    public function first(array $columns = ['*'], array $conditions = []): ?Model;
+    public function first(array $columns = ['*']);
 
     /**
      * Get collection
@@ -73,9 +72,9 @@ interface RepositoryInterface
      * New entry
      *
      * @param array $fillable
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return mixed
      */
-    public function create(array $fillable): ?Model;
+    public function create(array $fillable);
 
     /**
      * Updates data
