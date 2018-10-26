@@ -88,12 +88,13 @@ trait Requestable
                 continue;
             }
 
-            if (isset($this->aliases[$param])) {
-                $param = $this->aliases[$param];
+            if (count($this->allowedFilters) > 0 &&
+                ! in_array($param, $this->allowedFilters)) {
+                continue;
             }
 
-            if (! in_array($param, $this->allowedFilters)) {
-                continue;
+            if (isset($this->aliases[$param])) {
+                $param = $this->aliases[$param];
             }
 
             if (is_array($value)) {
