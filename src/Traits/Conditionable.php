@@ -176,8 +176,7 @@ trait Conditionable
     /**
      * Grouped conditions
      *
-     * @param string $column
-     * @param mixed  $value
+     * @param \Closure $closure
      * @return $this
      */
     public function whereGroup(Closure $closure): self

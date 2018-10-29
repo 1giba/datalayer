@@ -102,4 +102,31 @@ abstract class Repository implements RepositoryInterface
     {
         return $this->model->destroy($resourceId);
     }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function count(): int
+    {
+        return $this->query()
+            ->count();
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function sum(string $column)
+    {
+        return $this->query()
+            ->sum($column);
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function max(string $column)
+    {
+        return $this->query()
+            ->max($column);
+    }
 }

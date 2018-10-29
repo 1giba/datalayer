@@ -124,8 +124,18 @@ trait Requestable
      */
     public function selectFields(string $attributes): Builder
     {
+        $attrs = explode(',', $attributes);
+        $results = [];
+        foreach ($attrs as $attr) {
+            if (in_array($attr, array_keys($this->aliases))) {
+                $results[] = DB::raw($this->aliases[$attr] . ' AS ' . $attr);
+                continue;
+            }
+            $results[] = $attr;
+        }
+
         return $this->query()
-            ->select(explode(',', $attributes));
+            ->select($results);
     }
 
     /**

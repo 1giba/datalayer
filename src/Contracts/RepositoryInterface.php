@@ -56,4 +56,27 @@ interface RepositoryInterface
      * @return int
      */
     public function delete(int $resourceId): int;
+
+    /**
+     * Rows count
+     *
+     * @return int
+     */
+    public function count(): int;
+
+    /**
+     * Sum field value
+     *
+     * @param string column
+     * @return mixed
+     */
+    public function sum(string column);
+
+    /**
+     * Max field value
+     *
+     * @param string column
+     * @return mixed
+     */
+    public function max(string column);
 }
