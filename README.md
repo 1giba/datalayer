@@ -364,7 +364,7 @@ or
 [
     {
         "id": 2,
-        "username": "Mary Jane",
+        "name": "Mary Jane",
         "email": "mary@gmail.com",
         "age": 41,
         "role_id": 2,
@@ -373,7 +373,7 @@ or
     },
     {
         "id": 1,
-        "username": "John Doe",
+        "name": "John Doe",
         "email": "john@gmail.com",
         "age": 22,
         "role_id": 1,
