@@ -67,16 +67,16 @@ interface RepositoryInterface
     /**
      * Sum field value
      *
-     * @param string column
+     * @param string $column
      * @return mixed
      */
-    public function sum(string column);
+    public function sum(string $column);
 
     /**
      * Max field value
      *
-     * @param string column
+     * @param string $column
      * @return mixed
      */
-    public function max(string column);
+    public function max(string $column);
 }
