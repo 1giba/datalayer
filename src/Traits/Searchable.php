@@ -127,4 +127,15 @@ trait Searchable
         $this->model = $model->distinct();
         return $this;
     }
+
+    /**
+     * @param int $limit
+     * @return $this
+     */
+    public function take(int $limit): self
+    {
+        $model = $this->query();
+        $this->model = $model->take($limit);
+        return $this;
+    }
 }
