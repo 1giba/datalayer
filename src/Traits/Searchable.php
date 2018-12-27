@@ -13,9 +13,9 @@ trait Searchable
      *
      * @param int $resourceId
      * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return mixed
      */
-    public function find(int $resourceId, array $columns = ['*']): ?Model
+    public function find(int $resourceId, array $columns = ['*'])
     {
         return $this->query()->find($resourceId, $columns);
     }
