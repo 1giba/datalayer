@@ -92,7 +92,11 @@ abstract class Repository implements RepositoryInterface
      */
     public function update(array $fillable, int $resourceId)
     {
-        return ! $resource->fill($fillable)->save() ?? $resource;
+        $resource = $this->model->find($resourceId);
+        if ($respource instanceof Model) {
+            $resource->fill($fillable)->save();
+        }
+        return $resource;
     }
 
     /**
