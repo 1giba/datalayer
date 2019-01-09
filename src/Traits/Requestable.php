@@ -68,23 +68,24 @@ trait Requestable
      */
     public function queryString(array $params = []): self
     {
+        $model = $this->query();
         foreach ($params as $param => $value) {
             if (is_null($value)) {
                 continue;
             }
 
             if ($param === $this->attributesParam) {
-                $this->model = $this->selectFields($value);
+                $model = $this->selectFields($value);
                 continue;
             }
 
             if ($param === $this->sortParam) {
-                $this->model = $this->applySorting($value);
+                $model = $this->applySorting($value);
                 continue;
             }
 
             if (isset($this->customFilters[$param])) {
-                $this->model = $this->applyCustomFilters($param, $value);
+                $model = $this->applyCustomFilters($param, $value);
                 continue;
             }
 
@@ -97,22 +98,13 @@ trait Requestable
                 $param = $this->aliases[$param];
             }
 
-            if (is_array($value)) {
-                $this->model = $this->query()->whereIn($param, $value);
-                continue;
-            }
-
             $values = explode(',', $value);
             if (count($values) === 1) {
-                if (in_array($param, $this->partials)) {
-                    $this->model = $this->query()->where($param, 'ILIKE', '%' . $value . '%');
-                    continue;
-                }
-                $this->model = $this->query()->where($param, $value);
+                $this->where($param, $value);
                 continue;
             }
 
-            $this->model = $this->query()->whereIn($param, $values);
+            $this->where($param, $values);
         }
 
         return $this;
@@ -134,8 +126,7 @@ trait Requestable
             $results[] = $attr;
         }
 
-        return $this->query()
-            ->select($results);
+        return $this->select($results);
     }
 
     /**

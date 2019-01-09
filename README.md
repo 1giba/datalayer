@@ -2,6 +2,8 @@
 
 > A simplest abstraction layer for eloquent models
 
+No fat models and standardized methods.
+
 ## Installation
 
 ### Composer
@@ -14,8 +16,8 @@ $ composer require 1giba/datalayer
 
 ### Pre-requisites
 
-* >= laravel5.1
-* >= php7.1
+* `>= laravel5.1`
+* `>= php7.1`
 
 ## Basic Usage
 
@@ -49,7 +51,7 @@ echo $user->email;
 
 ### OneGiba\DataLayer\Contracts\RepositoryInterface
 
-- fisrt(array $columns = ['*']): mixed
+- fisrt(): mixed
 - get(): \Illuminate\Support\Collection
 - paginate(int $perPage = 50): \Illuminate\Pagination\LengthAwarePaginator;
 - create(array $fillable): mixed
@@ -71,29 +73,11 @@ echo $user->email;
 
 ### OneGiba\DataLayer\Traits\Conditionable
 
+- setEquals(string): self
 - where(string $column, $value): self
-- whereNot(string $column, $value): self
-- whereLike(string $column, $value): self
-- whereNotLike(string $column, $value): self
-- whereBetween(string $column, $from, $until): self
-- whereGreaterThan(string $column, $value): self
-- whereGreaterOrEqualThan(string $column, $value): self
-- whereLessThan(string $column, $value): self
-- whereLessOrEqualThan(string $column, $value): self
-- whereIsNull(string $column): self
-- whereIsNotNull(string $column, $value): self
-- orWhere(string $column, $value): self
-- orWhereNot(string $column, $value): self
-- orWhereLike(string $column, $value): self
-- orWhereNotLike(string $column, $value): self
-- orWhereBetween(string $column, $from, $until): self
-- orWhereGreaterThan(string $column, $value): self
-- orWhereGreaterOrEqualThan(string $column, $value): self
-- orWhereLessThan(string $column, $value): self
-- orWhereLessOrEqualThan(string $column, $value): self
-- orWhereIsNull(string $column): self
-- orWhereIsNotNull(string $column, $value): self
-- whereGroup(Closure $closure): self
+- setScope(string): self
+- resetScope(): self
+- applyScope(): self
 
 ### OneGiba\DataLayer\Traits\Joinable
 
@@ -145,14 +129,13 @@ namespace App\Http\Controllers;
 
 use App\Repositories\UserRepository;
 
-class UserController extends Controller {
+class UserController extends Controller
+{
 
-    /**
-     * @var \App\Repositories\UserRepository
-     */
     protected $repository;
 
-    public function __construct(UserRepository $repository){
+    public function __construct(UserRepository $repository)
+    {
         $this->repository = $repository;
     }
 
@@ -181,10 +164,12 @@ $user = $this->repository->find($id);
 Showing only specific attributes of the model:
 
 ```php
-$user = $this->repository->find($id, [
-    'name',
-    'email',
-]);
+$user = $this->repository
+    ->select([
+        'name',
+        'email',
+    ])
+    ->find($id);
 ```
 
 Loading the Model relationships:
@@ -207,9 +192,8 @@ Find by result by multiple fields:
 
 ```php
 $users = $this->repository
-    ->where('email','joedoe@joedoe.com')
+    ->where('email','joedoe@gmail.com')
     ->where('role_id', 1)
-    ->whereGreaterThan('age', 17)
     ->get();
 ```
 
@@ -221,32 +205,16 @@ $users = $this->repository
     ->get();
 ```
 
-Find by result by excluding multiple values in one field
-
-```php
-$users = $this->repository
-    ->whereNot('id', [6, 7, 8, 9, 10,])
-    ->get();
-```
-
-Find by result using OR
+Find by result using scope
 
 ```php
 $users = $this->repository
     ->where('name', 'Joe Doe')
-    ->orWhere('name', 'Mary Jane')
-    ->get();
-```
-
-Find by result using OR and WhereGroup
-
-```php
-$users = $this->repository
-    ->where('name', 'Joe Doe')
-    ->whereGroup(function ($query) {
+    ->setScope(function ($query) {
         $query->where('age', 15)
             ->orWhere('age', 18);
     })
+    ->applyScope()
     ->get();
 ```
 
@@ -333,7 +301,7 @@ class UserController extends Controller
  * Supports
  *
  * http://onegiba.dev.local/users?name=John
- * http://onegiba.dev.local/users?email=johndoe@johndoe.com
+ * http://onegiba.dev.local/users?email=joedoe@gmail.com
  * http://onegiba.dev.local/users?sorts=id,-name
  */
 ```
@@ -342,7 +310,7 @@ class UserController extends Controller
 
 or
 
-`http://onegiba.dev.local/users?email=johndoe@johndoe.com`
+`http://onegiba.dev.local/users?email=joedoe@gmail.com`
 
 ```json
 [

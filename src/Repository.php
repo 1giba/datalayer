@@ -55,10 +55,10 @@ abstract class Repository implements RepositoryInterface
     /**
      * { @inheritdoc }
      */
-    public function first(array $columns = ['*'])
+    public function first()
     {
         return $this->query()
-            ->first($columns);
+            ->first();
     }
 
     /**

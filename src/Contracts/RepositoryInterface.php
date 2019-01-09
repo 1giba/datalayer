@@ -11,11 +11,9 @@ interface RepositoryInterface
     /**
      * First row
      *
-     * @param array $columns
-     * @param array $conditions
      * @return mixed
      */
-    public function first(array $columns = ['*']);
+    public function first();
 
     /**
      * Get collection

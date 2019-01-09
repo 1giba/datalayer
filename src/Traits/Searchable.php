@@ -9,26 +9,35 @@ use DB;
 trait Searchable
 {
     /**
+     * @const array
+     */
+    const SELECT_ALL_FIELDS = ['*'];
+
+    /**
+     * @var array
+     */
+    protected $selectedFields = self::SELECT_ALL_FIELDS;
+
+    /**
      * Basic search
      *
      * @param int $resourceId
      * @param array $columns
      * @return mixed
      */
-    public function find(int $resourceId, array $columns = ['*'])
+    public function find(int $resourceId)
     {
-        return $this->query()->find($resourceId, $columns);
+        return $this->query()->find($resourceId, $this->selectedFields);
     }
 
     /**
      * All rows
      *
-     * @param array $columns
      * @return \Illuminate\Support\Collection
      */
-    public function all(array $columns = ['*']): Collection
+    public function all(): Collection
     {
-        return $this->model->all($columns);
+        return $this->model->all($this->selectedFields);
     }
 
     /**
@@ -40,11 +49,14 @@ trait Searchable
     public function select(array $fields): self
     {
         $model = $this->query();
-        $rawFields = [];
+        $this->selectedFields = [];
         foreach ($fields as $field) {
-            $rawFields[] = DB::raw($field);
+            $this->selectedFields[] = DB::raw($field);
         }
-        $this->model = $model->select($rawFields);
+        if (empty($this->selectedFields)) {
+            $this->selectedFields = self::SELECT_ALL_FIELDS;
+        }
+        $this->model = $model->select($this->selectedFields);
         return $this;
     }
 
