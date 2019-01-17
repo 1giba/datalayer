@@ -11,12 +11,12 @@ trait Searchable
     /**
      * @const array
      */
-    const SELECT_ALL_FIELDS = ['*'];
+    protected $allFields = ['*'];
 
     /**
      * @var array
      */
-    protected $selectedFields = self::SELECT_ALL_FIELDS;
+    protected $selectedFields = ['*'];
 
     /**
      * Basic search
@@ -54,7 +54,7 @@ trait Searchable
             $this->selectedFields[] = DB::raw($field);
         }
         if (empty($this->selectedFields)) {
-            $this->selectedFields = self::SELECT_ALL_FIELDS;
+            $this->selectedFields = $this->allFields;
         }
         $this->model = $model->select($this->selectedFields);
         return $this;

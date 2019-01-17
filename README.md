@@ -300,13 +300,13 @@ class UserController extends Controller
 /**
  * Supports
  *
- * http://onegiba.dev.local/users?name=John
+ * http://onegiba.dev.local/users?name=Joe
  * http://onegiba.dev.local/users?email=joedoe@gmail.com
  * http://onegiba.dev.local/users?sorts=id,-name
  */
 ```
 
-`http://onegiba.dev.local/users?name=John`
+`http://onegiba.dev.local/users?name=Joe`
 
 or
 
@@ -316,8 +316,8 @@ or
 [
     {
         "id": 1,
-        "name": "John Doe",
-        "email": "john@gmail.com",
+        "name": "Joe Doe",
+        "email": "joedoe@gmail.com",
         "age": 22,
         "role_id": 1,
         "created_at": "-0001-11-30 00:00:00",
@@ -341,8 +341,8 @@ or
     },
     {
         "id": 1,
-        "name": "John Doe",
-        "email": "john@gmail.com",
+        "name": "Joe Doe",
+        "email": "joedoe@gmail.com",
         "age": 22,
         "role_id": 1,
         "created_at": "-0001-11-30 00:00:00",
@@ -359,7 +359,7 @@ Filtering fields:
 [
     {
         "id": 1,
-        "name": "John Doe"
+        "name": "Joe Doe"
     },
     {
         "id": 2,
