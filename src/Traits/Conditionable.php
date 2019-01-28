@@ -14,7 +14,7 @@ trait Conditionable
     /**
      * @var string
      */
-    protected $equals = 'LIKE';
+    protected $equals = '=';
 
     /**
      * Set Equals
