@@ -11,6 +11,6 @@ trait Debuggable
      */
     public function debug()
     {
-        dd($this->query()->toSql());
+        dd($this->getQuery()->toSql());
     }
 }

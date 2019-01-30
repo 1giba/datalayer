@@ -2,7 +2,10 @@
 
 > A simplest abstraction layer for eloquent models
 
-No fat models and standardized methods.
+* No fat models;
+* Standardized methods;
+* More instictive;
+* Improves more easily readable.
 
 ## Installation
 
@@ -16,7 +19,7 @@ $ composer require 1giba/datalayer
 
 ### Pre-requisites
 
-* `>= laravel5.1`
+* `>= laravel5.5`
 * `>= php7.1`
 
 ## Basic Usage
@@ -52,7 +55,7 @@ echo $user->email;
 ### OneGiba\DataLayer\Contracts\RepositoryInterface
 
 - fisrt(): mixed
-- get(): \Illuminate\Support\Collection
+- fetch(): \Illuminate\Support\Collection
 - paginate(int $perPage = 50): \Illuminate\Pagination\LengthAwarePaginator;
 - create(array $fillable): mixed
 - update(array $fillable, int $resourceId): mixed
@@ -60,24 +63,38 @@ echo $user->email;
 - count(): int;
 - sum(string $column): mixed;
 - max(string $column): mixed;
+- min(string $column): mixed;
+- avg(string $column): mixed;
 
 ### OneGiba\DataLayer\Traits\Searchable
 
-- find(int $resourceId, array $columns = ['*']): ?\Illuminate\Database\Eloquent\Model
-- all(array $columns = ['*']): \Illuminate\Support\Collection
-- select(array $fields): self
-- orderBy(...$args): self
+- findById(int $resourceId): ?\Illuminate\Database\Eloquent\Model
+- fetchAll(array $columns = ['*']): \Illuminate\Support\Collection
+- showFields(array $fields): self
+- sortAscending(string $sortField): self
+- sortDescending(string $sortField): self
 - groupBy(...$args): self
+- limit(int $quantity): self
 - having(string $aggregation, string $operator, $value): self
 - distinct(): self
 
 ### OneGiba\DataLayer\Traits\Conditionable
 
-- setEquals(string): self
-- where(string $column, $value): self
-- setScope(string): self
-- resetScope(): self
-- applyScope(): self
+- equal(string, mixed): self
+- notEqual(string, mixed): self
+- like(string, mixed): self
+- notLike(string, mixed): self
+- greaterThan(string, mixed): self
+- greaterThanEqual(string, mixed): self
+- lessThan(string, mixed): self
+- lessThanEqual(string, mixed): self
+- between(string, mixed, mixed): self
+- isNull(string): self
+- isNotNull(string): self
+- clausules(closure): self
+- orClausules(closure): self
+
+*PS:* All clausules methods have a `or` implementation with prefix `or`. Ex.: orEqual(), orIsNull(), etc.
 
 ### OneGiba\DataLayer\Traits\Joinable
 
@@ -146,7 +163,7 @@ class UserController extends Controller
 Find all results in Repository:
 
 ```php
-$users = $this->repository->all();
+$users = $this->repository->fetchAll();
 ```
 
 Find all results in Repository with pagination:
@@ -158,18 +175,18 @@ $users = $this->repository->paginate(50);
 Find by result by id:
 
 ```php
-$user = $this->repository->find($id);
+$user = $this->repository->findById($id);
 ```
 
 Showing only specific attributes of the model:
 
 ```php
 $user = $this->repository
-    ->select([
+    ->showFields([
         'name',
         'email',
     ])
-    ->find($id);
+    ->findById($id);
 ```
 
 Loading the Model relationships:
@@ -177,46 +194,186 @@ Loading the Model relationships:
 ```php
 $user = $this->repository->with([
     'roles',
-])->find($id);
+])->findById($id);
 ```
 
 Find by result by field name:
 
+```sql
+SELECT * FROM users WHERE name = 'Joe Doe' LIMIT 1
+```
+
 ```php
 $users = $this->repository
-    ->where('name','Joe Doe')
+    ->equal('name','Joe Doe')
     ->first();
 ```
 
 Find by result by multiple fields:
 
+```sql
+SELECT * FROM users WHERE email = 'joedoe@gmail.com' AND role_id > 1
+ORDER BY id
+```
+
 ```php
 $users = $this->repository
-    ->where('email','joedoe@gmail.com')
-    ->where('role_id', 1)
-    ->get();
+    ->equal('email','joedoe@gmail.com')
+    ->greaterThan('role_id', 1)
+    ->sortAscending('id')
+    ->fetch();
 ```
 
 Find by result by multiple values in one field;
 
-```php
-$users = $this->repository
-    ->where('id', [1, 2, 3, 4, 5,])
-    ->get();
+```sql
+SELECT * FROM users WHERE id IN (1, 2, 3, 4, 5) ORDER BY id DESC
 ```
 
-Find by result using scope
+```php
+$users = $this->repository
+    ->equal('id', [1, 2, 3, 4, 5,])
+    ->sortDesceding('id')
+    ->fetch();
+```
+
+Find by result using `AND` and `OR`:
+
+```sql
+SELECT * FROM users WHERE (age > 18 AND genre = 'M')
+OR email LIKE '%@gmail.com'
+```
 
 ```php
 $users = $this->repository
-    ->where('name', 'Joe Doe')
-    ->setScope(function ($query) {
-        $query->where('age', 15)
-            ->orWhere('age', 18);
+    ->clausules(function ($repository) {
+        return $repository->greaterThan(18)
+            ->equal('genre', 'M');
     })
-    ->applyScope()
-    ->get();
+    ->orLike('email', '%gmail.com')
+    ->fetch();
 ```
+
+Find by result using `OR` and `AND`:
+
+```sql
+SELECT * FROM users WHERE (name LIKE %oe% OR email LIKE %gmail%)
+AND active = 1
+```
+
+```php
+$users = $this->repository
+    ->clausules(function ($repository) {
+        return $repository->like('%oe%')
+            ->orLike('email', '%gmail%');
+    })
+    ->equal('active', 1)
+    ->fetch();
+```
+
+Find by result using `AND` and `OR`:
+
+```sql
+SELECT * FROM users WHERE (age > 18 AND genre = 'M') OR
+(email LIKE '%@gmail.com' OR email LIKE '%@live.com')
+ORDER BY name, email DESC
+```
+
+```php
+$users = $this->repository
+    ->clausules(function ($repository) {
+        return $repository->greaterThan(18)
+            ->equal('genre', 'M');
+    })
+    ->orClausules(function ($repository) {
+        return $repository->like('email', '%gmail.com')
+            ->orLike('email', '%@live.com');
+    })
+    ->sortAscending('name')
+    ->sortDescending('email')
+    ->fetch();
+```
+
+Find by result using `INNER JOIN`:
+
+```sql
+SELECT users.id, roles.name, users.name, users.email FROM users
+INNER JOIN roles ON roles.id = users.role_id
+WHERE users.age >= 18
+ORDER BY users.name
+```
+
+```php
+$users = $this->repository
+    ->showFields([
+        'users.id',
+        'roles.name',
+        'users.name',
+        'users.email',
+    ])
+    ->innerJoin('roles', [
+        'roles.id' => 'users.role_id',
+    ])
+    ->greaterThanEqual('users.age', 18)
+    ->sortAscending('users.name')
+    ->fetch();
+```
+
+Find products without categories by result using `LEFT JOIN`:
+
+```sql
+SELECT products.id, products.name FROM products
+LEFT JOIN categories ON categories.id = products.category_id
+WHERE categories.id IS NULL
+ORDER BY products.stock DESC
+```
+
+```php
+$products = $this->productRepository
+    ->showFields([
+        'products.id',
+        'products.name',
+    ])
+    ->leftJoin('categories', [
+        'categories.id' => 'products.category_id',
+    ])
+    ->isNull('categories.id')
+    ->sortDescending('products.stock')
+    ->fetch();
+```
+
+Find how much the top 10 customers already spent more than $100.00 using aggregate fields:
+
+```sql
+SELECT customers.id, customers.name, SUM(orders.total) AS total_orders FROM customers
+INNER JOIN orders ON orders.customer_id = customers.id
+GROUP BY customers.id, customers.name
+HAVING SUM(orders.total) > 100.00
+ORDER BY SUM(orders.total) DESC
+LIMIT 10
+```
+
+```php
+$topCustomers = $this->customerRepository
+    ->showFields([
+        'products.id',
+        'products.name',
+        'SUM(orders.total) AS total_orders',
+    ])
+    ->innerJoin('orders', [
+        'orders.customer_id' => 'customers.id',
+    ])
+    ->groupBy([
+        'customers.id',
+        'customers.name',
+    ])
+    ->having('SUM(orders.total)', '>', 100.00)
+    ->sortDescending('SUM(orders.total)')
+    ->limit(10)
+    ->fetch();
+```
+
+*PS:* Queries with joins must have the table name like alias.
 
 Create new entry in Repository
 
@@ -224,16 +381,16 @@ Create new entry in Repository
 $user = $this->repository->create(request()->all());
 ```
 
-Update entry in Repository
+Update entry in Repository (object response null if not found)
 
 ```php
-$user = $this->repository->update(request()->all(), $userId );
+$user = $this->repository->update(request()->all(), $userId);
 ```
 
 Delete entry in Repository
 
 ```php
-$this->repository->delete($userId)
+$this->repository->delete($userId);
 ```
 
 ### Using the Debuggable Trait
@@ -251,13 +408,17 @@ Prints SQL statement:
 
 ```php
 $users = $this->repository
-    ->select([
+    ->showFields([
         'age',
         'COUNT(1) AS total_per_age',
     ])
     ->groupBy('age')
-    ->orderBy('age')
+    ->sortAscending('age')
     ->debug(); // Show SQL
+```
+
+```sql
+SELECT age, COUNT(1) AS total_per_age FROM users GROUP BY age ORDER BY age
 ```
 
 ### Using the Requestable Trait

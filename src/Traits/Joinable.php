@@ -13,22 +13,22 @@ trait Joinable
      */
     public function join(string $table, array $relationships): self
     {
-        $model = $this->query();
+        $query = $this->getQuery();
         if (count($relationships) === 1) {
-            $model = $model->join(
+            $query = $query->join(
                 $table,
                 array_keys($relationships)[0],
                 '=',
                 array_values($relationships)[0]
             );
         } else {
-            $model = $model->join($table, function($join) use ($relationships) {
+            $query = $query->join($table, function($join) use ($relationships) {
                 foreach ($relationships as $primary => $foreign) {
                     $join->on($table, $primary, '=', $foreign);
                 }
             });
         }
-        $this->model = $model;
+        $this->query = $query;
         return $this;
     }
 
@@ -53,22 +53,22 @@ trait Joinable
      */
     public function leftJoin(string $table, array $relationships): self
     {
-        $model = $this->query();
+        $query = $this->getQuery();
         if (count($relationships) === 1) {
-            $model = $model->leftJoin(
+            $query = $query->leftJoin(
                 $table,
                 array_keys($relationships)[0],
                 '=',
                 array_values($relationships)[0]
             );
         } else {
-            $model = $model->leftJoin($table, function($join) use ($relationships) {
+            $query = $query->leftJoin($table, function($join) use ($relationships) {
                 foreach ($relationships as $primary => $foreign) {
                     $join->on($table, $primary, '=', $foreign);
                 }
             });
         }
-        $this->model = $model;
+        $this->query = $query;
         return $this;
     }
 
@@ -78,7 +78,7 @@ trait Joinable
      */
     public function with(array $relationships): self
     {
-        $this->model = $this->query()->with($relationships);
+        $this->query = $this->getQuery()->with($relationships);
 
         return $this;
     }

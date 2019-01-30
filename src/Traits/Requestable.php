@@ -68,24 +68,24 @@ trait Requestable
      */
     public function queryString(array $params = []): self
     {
-        $model = $this->query();
+        $query = $this->getQuery();
         foreach ($params as $param => $value) {
             if (is_null($value)) {
                 continue;
             }
 
             if ($param === $this->attributesParam) {
-                $model = $this->selectFields($value);
+                $query = $this->selectFields($value);
                 continue;
             }
 
             if ($param === $this->sortParam) {
-                $model = $this->applySorting($value);
+                $query = $this->applySorting($value);
                 continue;
             }
 
             if (isset($this->customFilters[$param])) {
-                $model = $this->applyCustomFilters($param, $value);
+                $query = $this->applyCustomFilters($param, $value);
                 continue;
             }
 
@@ -126,7 +126,7 @@ trait Requestable
             $results[] = $attr;
         }
 
-        return $this->select($results);
+        return $this->showFields($results);
     }
 
     /**
@@ -135,7 +135,7 @@ trait Requestable
      */
     public function applySorting(string $sortFields): Builder
     {
-        $model  = $this->query();
+        $query  = $this->getQuery();
         $fields = explode(',', $sortFields);
         foreach ($fields as $field) {
             $hasPrefix      = substr($field, 0, 1) === '-';
@@ -149,9 +149,9 @@ trait Requestable
             $field = isset($this->aliases[$field])
                 ? $this->aliases[$field]
                 : $field;
-            $model = $model->orderBy($field, $orientation);
+            $query = $query->orderBy($field, $orientation);
         }
-        return $model;
+        return $query;
     }
 
     /**
@@ -211,10 +211,10 @@ trait Requestable
     public function applyCustomFilters($param, $value): Builder
     {
         if (!isset($this->customFilters[$param][$value])) {
-            return $this->query();
+            return $this->getQuery();
         }
 
-        return $this->query()->whereRaw($this->customFilters[$param][$value]);
+        return $this->getQuery()->whereRaw($this->customFilters[$param][$value]);
     }
 
     /**

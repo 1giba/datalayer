@@ -25,9 +25,9 @@ trait Searchable
      * @param array $columns
      * @return mixed
      */
-    public function find(int $resourceId)
+    public function findById(int $resourceId)
     {
-        return $this->query()->find($resourceId, $this->selectedFields);
+        return $this->getQuery()->find($resourceId, $this->selectedFields);
     }
 
     /**
@@ -35,7 +35,7 @@ trait Searchable
      *
      * @return \Illuminate\Support\Collection
      */
-    public function all(): Collection
+    public function fetchAll(): Collection
     {
         return $this->model->all($this->selectedFields);
     }
@@ -46,9 +46,9 @@ trait Searchable
      * @param array $fields
      * @return $this
      */
-    public function select(array $fields): self
+    public function showFields(array $fields): self
     {
-        $model = $this->query();
+        $query = $this->getQuery();
         $this->selectedFields = [];
         foreach ($fields as $field) {
             $this->selectedFields[] = DB::raw($field);
@@ -56,36 +56,7 @@ trait Searchable
         if (empty($this->selectedFields)) {
             $this->selectedFields = $this->allFields;
         }
-        $this->model = $model->select($this->selectedFields);
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function orderBy(...$args): self
-    {
-        if (empty($args)) {
-            return $this;
-        }
-
-        $model = $this->query();
-        if (count($args) === 2) {
-            list($column, $orientation) = $args;
-            $model = $model->orderBy(DB::raw($column), $orientation);
-        } elseif (is_array($args[0])) {
-            foreach ($args as $sortField) {
-                list($column, $orientation) = $sortField;
-                if (! $orientation ||
-                    !in_array(strtoupper($orientation), ['ASC', 'DESC'])) {
-                    $orientation = 'ASC';
-                }
-                $model = $model->orderBy(DB::raw($column), $orientation);
-            }
-        } else {
-            $model = $model->orderBy(DB::raw($args[0]));
-        }
-        $this->model = $model;
+        $this->query = $query->showFields($this->selectedFields);
         return $this;
     }
 
@@ -99,17 +70,17 @@ trait Searchable
             return $this;
         }
 
-        $model = $this->query();
+        $query = $this->getQuery();
         if (is_array($args[0])) {
             $groups = array_map(function ($group) {
                 return DB::raw($group);
             }, $args[0]);
 
-            $model = $model->groupBy($groups);
+            $query = $query->groupBy($groups);
         } else {
-            $model = $model->groupBy(DB::raw($args[0]));
+            $query = $query->groupBy(DB::raw($args[0]));
         }
-        $this->model = $model;
+        $this->query = $query;
         return $this;
     }
 
@@ -121,8 +92,8 @@ trait Searchable
      */
     public function having(string $aggregation, string $operator, $value): self
     {
-        $model = $this->query();
-        $this->model = $model->having(
+        $query = $this->getQuery();
+        $this->query = $query->having(
             DB::raw($aggregation),
             $operator,
             $value
@@ -135,19 +106,41 @@ trait Searchable
      */
     public function distinct(): self
     {
-        $model = $this->query();
-        $this->model = $model->distinct();
+        $query = $this->getQuery();
+        $this->query = $query->distinct();
         return $this;
     }
 
     /**
-     * @param int $limit
+     * @param int $quantity
      * @return $this
      */
-    public function take(int $limit): self
+    public function limit(int $quantity): self
     {
-        $model = $this->query();
-        $this->model = $model->take($limit);
+        $query = $this->getQuery();
+        $this->query = $query->take($quantity);
+        return $this;
+    }
+
+    /**
+     * @param string $sortField
+     * @return $this
+     */
+    public function sortAscending(string $sortField): self
+    {
+        $query = $this->getQuery();
+        $this->query = $query->orderBy(DB::raw($sortField), 'ASC');
+        return $this;
+    }
+
+    /**
+     * @param string $sortField
+     * @return $this
+     */
+    public function sortDescending(string $sortField): self
+    {
+        $query = $this->getQuery();
+        $this->query = $query->orderBy(DB::raw($sortField), 'DESC');
         return $this;
     }
 }

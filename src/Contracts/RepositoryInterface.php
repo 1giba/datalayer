@@ -20,7 +20,7 @@ interface RepositoryInterface
      *
      * @return \Illuminate\Support\Collection
      */
-    public function get(): Collection;
+    public function fetch(): Collection;
 
     /**
      * Paginate data
@@ -77,4 +77,20 @@ interface RepositoryInterface
      * @return mixed
      */
     public function max(string $column);
+
+    /**
+     * Min field value
+     *
+     * @param string $column
+     * @return mixed
+     */
+    public function min(string $column);
+
+    /**
+     * Average field value
+     *
+     * @param string $column
+     * @return mixed
+     */
+    public function avg(string $column);
 }

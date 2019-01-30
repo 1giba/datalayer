@@ -18,6 +18,11 @@ abstract class Repository implements RepositoryInterface
         Joinable;
 
     /**
+     * @var \Illuminate\Database\Eloquent\Builder|null
+     */
+    protected $query;
+
+    /**
      * @var \Illuminate\Database\Eloquent\Model|null
      */
     protected $model;
@@ -43,13 +48,13 @@ abstract class Repository implements RepositoryInterface
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(): Builder
+    public function getQuery(): Builder
     {
-        if (! $this->model instanceof Builder) {
-            return $this->model->newQuery();
+        if (! $this->query instanceof Builder) {
+            $this->query = $this->model->newQuery();
         }
 
-        return $this->model;
+        return $this->query;
     }
 
     /**
@@ -57,17 +62,19 @@ abstract class Repository implements RepositoryInterface
      */
     public function first()
     {
-        return $this->query()
-            ->first();
+        $object = $this->getQuery()->first();
+        $this->reset();
+        return $object;
     }
 
     /**
      * { @inheritdoc }
      */
-    public function get(): Collection
+    public function fetch(): Collection
     {
-        return $this->query()
-            ->get();
+        $collection = $this->getQuery()->get();
+        $this->reset();
+        return $collection;
     }
 
     /**
@@ -75,8 +82,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function paginate(int $perPage = 50): LengthAwarePaginator
     {
-        return $this->query()
-            ->paginate($perPage);
+        $results = $this->getQuery()->paginate($perPage);
+        $this->reset();
+        return $results;
     }
 
     /**
@@ -84,7 +92,8 @@ abstract class Repository implements RepositoryInterface
      */
     public function create(array $fillable)
     {
-        return $this->model->create($fillable);
+        $this->reset();
+        return $this->getQuery()->create($fillable);
     }
 
     /**
@@ -92,7 +101,8 @@ abstract class Repository implements RepositoryInterface
      */
     public function update(array $fillable, int $resourceId)
     {
-        $resource = $this->model->find($resourceId);
+        $this->reset();
+        $resource = $this->getQuery()->find($resourceId);
         if ($respource instanceof Model) {
             $resource->fill($fillable)->save();
         }
@@ -104,7 +114,8 @@ abstract class Repository implements RepositoryInterface
      */
     public function delete(int $resourceId): int
     {
-        return $this->model->destroy($resourceId);
+        $this->reset();
+        return $this->getQuery()->destroy($resourceId);
     }
 
     /**
@@ -112,8 +123,10 @@ abstract class Repository implements RepositoryInterface
      */
     public function count(): int
     {
-        return $this->query()
+        $result = $this->getQuery()
             ->count();
+        $this->reset();
+        return $result;
     }
 
     /**
@@ -121,8 +134,10 @@ abstract class Repository implements RepositoryInterface
      */
     public function sum(string $column)
     {
-        return $this->query()
+        $result = $this->getQuery()
             ->sum($column);
+        $this->reset();
+        return $result;
     }
 
     /**
@@ -130,7 +145,45 @@ abstract class Repository implements RepositoryInterface
      */
     public function max(string $column)
     {
-        return $this->query()
+        $result = $this->getQuery()
             ->max($column);
+        $this->reset();
+        return $result;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function min(string $column)
+    {
+        $result = $this->getQuery()
+            ->min($column);
+        $this->reset();
+        return $result;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function avg(string $column)
+    {
+        $result = $this->getQuery()
+            ->avg($column);
+        $this->reset();
+        return $result;
+    }
+
+    /**
+     * Reset Builder
+     *
+     * @return $this
+     */
+    public function reset(): self
+    {
+        if ($this->query instanceof Builder) {
+            $this->query = $this->model->newQuery();
+        }
+
+        return $this;
     }
 }
