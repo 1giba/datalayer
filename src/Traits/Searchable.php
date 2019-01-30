@@ -56,7 +56,7 @@ trait Searchable
         if (empty($this->selectedFields)) {
             $this->selectedFields = $this->allFields;
         }
-        $this->query = $query->showFields($this->selectedFields);
+        $this->query = $query->select($this->selectedFields);
         return $this;
     }
 
