@@ -12,23 +12,6 @@ trait Conditionable
     protected $clausules;
 
     /**
-     * @var array
-     */
-    protected $clausuleMethods = [
-        'equal',
-        'notEqual',
-        'like',
-        'notLike',
-        'greaterThan',
-        'greaterThanEqual',
-        'lessThan',
-        'lessThanEqual',
-        'between',
-        'isNull',
-        'isNotNull',
-    ];
-
-    /**
      * Equal
      *
      * @param string $column
@@ -169,7 +152,7 @@ trait Conditionable
     }
 
     /**
-     * Less Than
+     * Between values
      *
      * @param string $column
      * @param mixed  $value1
@@ -187,7 +170,7 @@ trait Conditionable
     }
 
     /**
-     * Less Than
+     * Is null
      *
      * @param string $column
      * @param string $operator
@@ -203,7 +186,7 @@ trait Conditionable
     }
 
     /**
-     * Less Than
+     * Is not null
      *
      * @param string $column
      * @param string $operator
@@ -219,7 +202,7 @@ trait Conditionable
     }
 
     /**
-     * Agroup clausules 'AND'
+     * Agroup clausules with 'AND'
      *
      * @param \Closure $closure
      * @return $this
@@ -234,7 +217,7 @@ trait Conditionable
     }
 
     /**
-     * Agroup clausules 'OR'
+     * Agroup clausules with 'OR'
      *
      * @param \Closure $closure
      * @return $this
@@ -249,22 +232,133 @@ trait Conditionable
     }
 
     /**
-     * Checking for `Or` clausules methods
+     * Or equal
      *
-     * @param string $method
-     * @param array $params
-     * @return mixed
+     * @param string $column
+     * @param mixed  $value
+     * @return $this
      */
-    public function __call(string $method, array $params = [])
+    public function orEqual(string $column, $value): self
     {
-        $parts = explode('_', snake_case($method));
-        if (isset($parts[0]) && $parts[0] === 'or') {
-            $params[] = $parts[0];
-            $caller = lcfirst(str_replace($parts[0], '', $method));
-            if (in_array($caller, $this->clausuleMethods)) {
-                return $this->{$caller}(...$params);
-            }
-        }
-        return $this->{$method(...$params)};
+        return $this->equal($column, $value, 'OR');
+    }
+
+    /**
+     * Or not equal
+     *
+     * @param string $column
+     * @param mixed  $value
+     * @return $this
+     */
+    public function orNotEqual(string $column, $value): self
+    {
+        return $this->notEqual($column, $value, 'OR');
+    }
+
+    /**
+     * Or like
+     *
+     * @param string $column
+     * @param mixed  $value
+     * @return $this
+     */
+    public function orLike(string $column, $value): self
+    {
+        return $this->like($column, $value, 'OR');
+    }
+
+    /**
+     * Or not like
+     *
+     * @param string $column
+     * @param mixed  $value
+     * @return $this
+     */
+    public function orNotLike(string $column, $value): self
+    {
+        return $this->notLike($column, $value, 'OR');
+    }
+
+    /**
+     * Or greater Than
+     *
+     * @param string $column
+     * @param mixed  $value
+     * @return $this
+     */
+    public function orGreaterThan(string $column, $value): self
+    {
+        return $this->greaterThen($column, $value, 'OR');
+    }
+
+    /**
+     * Or greater than equal
+     *
+     * @param string $column
+     * @param mixed  $value
+     * @return $this
+     */
+    public function orGreaterThanEqual(string $column, $value): self
+    {
+        return $this->greaterThenEqual($column, $value, 'OR');
+    }
+
+    /**
+     * Or less than
+     *
+     * @param string $column
+     * @param mixed  $value
+     * @return $this
+     */
+    public function orLessThan(string $column, $value): self
+    {
+        return $this->lessThan($column, $value, 'OR');
+    }
+
+    /**
+     * Or less than equal
+     *
+     * @param string $column
+     * @param mixed  $value
+     * @return $this
+     */
+    public function orLessThanEqual(string $column, $value): self
+    {
+        return $this->lessThanEqual($column, $value, 'OR');
+    }
+
+    /**
+     * Or between
+     *
+     * @param string $column
+     * @param mixed  $value1
+     * @param mixed  $value2
+     * @return $this
+     */
+    public function orBetween(string $column, $value1, $value2): self
+    {
+        return $this->between($column, $value1, $value2, 'OR');
+    }
+
+    /**
+     * Or is null
+     *
+     * @param string $column
+     * @return $this
+     */
+    public function orIsNull(string $column): self
+    {
+        return $this->isNull($column, 'OR');
+    }
+
+    /**
+     * Or is not null
+     *
+     * @param string $column
+     * @return $this
+     */
+    public function orIsNotNull(string $column): self
+    {
+        return $this->isNotNull($column, 'OR');
     }
 }
