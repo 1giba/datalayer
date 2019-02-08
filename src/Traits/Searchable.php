@@ -118,7 +118,18 @@ trait Searchable
     public function limit(int $quantity): self
     {
         $query = $this->getQuery();
-        $this->query = $query->take($quantity);
+        $this->query = $query->limit($quantity);
+        return $this;
+    }
+
+    /**
+     * @param int $quantity
+     * @return $this
+     */
+    public function offest(int $quantity): self
+    {
+        $query = $this->getQuery();
+        $this->query = $query->offest($quantity);
         return $this;
     }
 

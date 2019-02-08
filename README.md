@@ -80,14 +80,14 @@ echo $user->email;
 
 ### OneGiba\DataLayer\Traits\Conditionable
 
-- equal(string, mixed): self
-- notEqual(string, mixed): self
+- isEqual(string, mixed): self
+- isNotEqual(string, mixed): self
 - like(string, mixed): self
 - notLike(string, mixed): self
-- greaterThan(string, mixed): self
-- greaterThanEqual(string, mixed): self
-- lessThan(string, mixed): self
-- lessThanEqual(string, mixed): self
+- isGreaterThan(string, mixed): self
+- isGreaterThanEqual(string, mixed): self
+- isLessThan(string, mixed): self
+- isLessThanEqual(string, mixed): self
 - between(string, mixed, mixed): self
 - isNull(string): self
 - isNotNull(string): self
@@ -205,7 +205,7 @@ SELECT * FROM users WHERE name = 'Joe Doe' LIMIT 1
 
 ```php
 $users = $this->repository
-    ->equal('name','Joe Doe')
+    ->isEqual('name','Joe Doe')
     ->first();
 ```
 
@@ -218,8 +218,8 @@ ORDER BY id
 
 ```php
 $users = $this->repository
-    ->equal('email','joedoe@gmail.com')
-    ->greaterThan('role_id', 1)
+    ->isEqual('email','joedoe@gmail.com')
+    ->isGreaterThan('role_id', 1)
     ->sortAscending('id')
     ->fetch();
 ```
@@ -232,7 +232,7 @@ SELECT * FROM users WHERE id IN (1, 2, 3, 4, 5) ORDER BY id DESC
 
 ```php
 $users = $this->repository
-    ->equal('id', [1, 2, 3, 4, 5,])
+    ->isEqual('id', [1, 2, 3, 4, 5,])
     ->sortDesceding('id')
     ->fetch();
 ```
@@ -247,8 +247,8 @@ OR email LIKE '%@gmail.com'
 ```php
 $users = $this->repository
     ->clausules(function ($repository) {
-        return $repository->greaterThan(18)
-            ->equal('genre', 'M');
+        return $repository->isGreaterThan(18)
+            ->isEqual('genre', 'M');
     })
     ->orLike('email', '%gmail.com')
     ->fetch();
@@ -267,7 +267,7 @@ $users = $this->repository
         return $repository->like('%oe%')
             ->orLike('email', '%gmail%');
     })
-    ->equal('active', 1)
+    ->isEqual('active', 1)
     ->fetch();
 ```
 
@@ -282,8 +282,8 @@ ORDER BY name, email DESC
 ```php
 $users = $this->repository
     ->clausules(function ($repository) {
-        return $repository->greaterThan(18)
-            ->equal('genre', 'M');
+        return $repository->isGreaterThan(18)
+            ->isEqual('genre', 'M');
     })
     ->orClausules(function ($repository) {
         return $repository->like('email', '%gmail.com')
