@@ -70,7 +70,7 @@ trait Requestable
     {
         $query = $this->getQuery();
         foreach ($params as $param => $value) {
-            if (is_null($value)) {
+            if (is_null($value) || $param === 'page') {
                 continue;
             }
 
@@ -100,11 +100,11 @@ trait Requestable
 
             $values = explode(',', $value);
             if (count($values) === 1) {
-                $this->where($param, $value);
+                $this->isEqual($param, $value);
                 continue;
             }
 
-            $this->where($param, $values);
+            $this->isEqual($param, $values);
         }
 
         return $this;
@@ -120,7 +120,7 @@ trait Requestable
         $results = [];
         foreach ($attrs as $attr) {
             if (in_array($attr, array_keys($this->aliases))) {
-                $results[] = DB::raw($this->aliases[$attr] . ' AS ' . $attr);
+                $results[] = $this->aliases[$attr] . ' AS ' . $attr;
                 continue;
             }
             $results[] = $attr;
