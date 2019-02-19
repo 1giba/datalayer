@@ -43,7 +43,7 @@ class UserRepository extends Repository
 $userRepository = new UserRepository;
 
 // Find an user by id
-$user = $userRepository->find(1234);
+$user = $userRepository->findById(1234);
 
 // Show results
 echo $user->name . PHP_EOL;
