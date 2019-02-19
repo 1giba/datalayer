@@ -100,6 +100,10 @@ trait Requestable
 
             $values = explode(',', $value);
             if (count($values) === 1) {
+                if (in_array($param, $this->partials)) {
+                    $this->like($param, '%' . $value . '%');
+                    continue;
+                }
                 $this->isEqual($param, $value);
                 continue;
             }
