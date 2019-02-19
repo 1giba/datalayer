@@ -22,7 +22,7 @@ trait Joinable
                 array_values($relationships)[0]
             );
         } else {
-            $query = $query->join($table, function($join) use ($relationships) {
+            $query = $query->join($table, function($join) use ($table, $relationships) {
                 foreach ($relationships as $primary => $foreign) {
                     $join->on($table, $primary, '=', $foreign);
                 }
@@ -62,7 +62,7 @@ trait Joinable
                 array_values($relationships)[0]
             );
         } else {
-            $query = $query->leftJoin($table, function($join) use ($relationships) {
+            $query = $query->leftJoin($table, function($join) use ($table, $relationships) {
                 foreach ($relationships as $primary => $foreign) {
                     $join->on($table, $primary, '=', $foreign);
                 }

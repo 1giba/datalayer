@@ -96,7 +96,7 @@ trait Searchable
         $this->query = $query->having(
             DB::raw($aggregation),
             $operator,
-            $value
+            DB::raw($value)
         );
         return $this;
     }
