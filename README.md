@@ -54,6 +54,8 @@ echo $user->email;
 
 ### OneGiba\DataLayer\Contracts\RepositoryInterface
 
+- findById(int $resourceId): ?\Illuminate\Database\Eloquent\Model
+- fetchAll(): \Illuminate\Support\Collection
 - fisrt(): mixed
 - fetch(): \Illuminate\Support\Collection
 - paginate(int $perPage = 50): \Illuminate\Pagination\LengthAwarePaginator;
@@ -68,8 +70,6 @@ echo $user->email;
 
 ### OneGiba\DataLayer\Traits\Searchable
 
-- findById(int $resourceId): ?\Illuminate\Database\Eloquent\Model
-- fetchAll(array $columns = ['*']): \Illuminate\Support\Collection
 - showFields(array $fields): self
 - sortAscending(string $sortField): self
 - sortDescending(string $sortField): self
@@ -543,6 +543,55 @@ Filtering fields:
         "name": "Laravel"
     }
 ]
+```
+
+## Caching Methods
+
+### Add Cacheable Trait
+
+```php
+namespace App\Repositories;
+
+use OneGiba\DataLayer\Traits\Cacheable;
+
+class UserRepository extends Repository
+{
+    use Cacheable; // Add this trait to cache
+
+    public function getExpirationTime(): int
+    {
+        return 60; // 60 minutes
+    }
+
+    /**
+     * Override method getTag from Cacheable trait
+     *
+     * @see https://laravel.com/docs/master/cache#cache-tags
+     */
+    public function getTag(): ?string
+    {
+        return 'users';
+    }
+}
+```
+
+### Usage
+
+Without cache:
+
+```php
+$users = $this->repository
+    ->between('birth_date', '1977-10-02', '1980-05-21')
+    ->get();
+```
+
+With cache:
+
+```php
+$users = $this->repository
+    ->between('birth_date', '1977-10-02', '1980-05-21')
+    ->cached() // Add this method to caching results
+    ->get();
 ```
 
 ## License

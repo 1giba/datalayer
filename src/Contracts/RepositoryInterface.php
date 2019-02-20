@@ -9,6 +9,21 @@ use Illuminate\Support\Collection;
 interface RepositoryInterface
 {
     /**
+     * Basic search
+     *
+     * @param int $resourceId
+     * @return mixed
+     */
+    public function findById(int $resourceId);
+
+    /**
+     * All rows
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function fetchAll(): Collection;
+
+    /**
      * First row
      *
      * @return mixed

@@ -14,33 +14,6 @@ trait Searchable
     protected $allFields = ['*'];
 
     /**
-     * @var array
-     */
-    protected $selectedFields = ['*'];
-
-    /**
-     * Basic search
-     *
-     * @param int $resourceId
-     * @param array $columns
-     * @return mixed
-     */
-    public function findById(int $resourceId)
-    {
-        return $this->getQuery()->find($resourceId, $this->selectedFields);
-    }
-
-    /**
-     * All rows
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function fetchAll(): Collection
-    {
-        return $this->model->all($this->selectedFields);
-    }
-
-    /**
      * Show fields in query
      *
      * @param array $fields
