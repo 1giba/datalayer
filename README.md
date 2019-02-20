@@ -209,6 +209,18 @@ $users = $this->repository
     ->first();
 ```
 
+Find all except one:
+
+```sql
+SELECT * FROM users WHERE id <> 234;
+```
+
+```php
+$users = $this->repository
+    ->isNotEqual('id', 234)
+    ->get();
+```
+
 Find by result by multiple fields:
 
 ```sql
