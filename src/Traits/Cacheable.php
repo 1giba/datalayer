@@ -41,6 +41,7 @@ trait Cacheable
         $this->isCached = true;
 
         return $this;
+    }
 
     /**
      * Get cache
