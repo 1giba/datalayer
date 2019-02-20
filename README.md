@@ -5,7 +5,8 @@
 * No fat models;
 * Standardized methods;
 * More instictive;
-* Improves more easily readable.
+* Improves more easily readable;
+* Easily caching results.
 
 ## Installation
 
