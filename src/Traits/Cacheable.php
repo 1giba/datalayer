@@ -15,6 +15,11 @@ trait Cacheable
     protected $cache = null;
 
     /**
+     * @var bool
+     */
+    protected $isCached = false;
+
+    /**
      * Get expiration time (In minutes)
      *
      * @return int
