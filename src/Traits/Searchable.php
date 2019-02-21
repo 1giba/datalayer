@@ -85,13 +85,14 @@ trait Searchable
     }
 
     /**
-     * @param int $quantity
+     * @param int $max
+     * @param int $offset
      * @return $this
      */
-    public function limit(int $quantity): self
+    public function limit(int $max, int $offset = 0): self
     {
         $query = $this->getQuery();
-        $this->query = $query->limit($quantity);
+        $this->query = $query->limit($max)->offset($offset);
         return $this;
     }
 

@@ -75,7 +75,7 @@ echo $user->email;
 - sortAscending(string $sortField): self
 - sortDescending(string $sortField): self
 - groupBy(...$args): self
-- limit(int $quantity): self
+- limit(int $max, int $offset): self
 - having(string $aggregation, string $operator, $value): self
 - distinct(): self
 
