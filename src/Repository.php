@@ -83,7 +83,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function first()
     {
-        return $this->getQuery()->first();
+        $results = $this->getQuery()->first();
+        $this->resetQuery();
+        return $results;
     }
 
     /**
@@ -91,7 +93,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function fetch(): Collection
     {
-        return $this->getQuery()->get();
+        $results = $this->getQuery()->get();
+        $this->resetQuery();
+        return $results;
     }
 
     /**
@@ -99,7 +103,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function paginate(int $perPage = 50): LengthAwarePaginator
     {
-        return $this->getQuery()->paginate($perPage);
+        $results = $this->getQuery()->paginate($perPage);
+        $this->resetQuery();
+        return $results;
     }
 
     /**
