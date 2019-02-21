@@ -108,7 +108,7 @@ echo $user->email;
 
 ### OneGiba\DataLayer\Traits\Debuggable
 
-- debug(): void
+- printSql(): string
 
 ### OneGiba\DataLayer\Traits\Requestable
 
@@ -420,14 +420,14 @@ class UserRepository extends Repository
 Prints SQL statement:
 
 ```php
-$users = $this->repository
+echo $this->repository
     ->showFields([
         'age',
         'COUNT(1) AS total_per_age',
     ])
     ->groupBy('age')
     ->sortAscending('age')
-    ->debug(); // Show SQL
+    ->printSql(); // Show SQL
 ```
 
 ```sql

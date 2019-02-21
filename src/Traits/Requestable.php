@@ -2,8 +2,6 @@
 
 namespace OneGiba\DataLayer\Traits;
 
-use Illuminate\Database\Eloquent\Builder;
-
 trait Requestable
 {
     /**
@@ -68,24 +66,23 @@ trait Requestable
      */
     public function queryString(array $params = []): self
     {
-        $query = $this->getQuery();
         foreach ($params as $param => $value) {
             if (is_null($value) || $param === 'page') {
                 continue;
             }
 
             if ($param === $this->attributesParam) {
-                $query = $this->selectFields($value);
+                $this->selectFields($value);
                 continue;
             }
 
             if ($param === $this->sortParam) {
-                $query = $this->applySorting($value);
+                $this->applySorting($value);
                 continue;
             }
 
             if (isset($this->customFilters[$param])) {
-                $query = $this->applyCustomFilters($param, $value);
+                $this->applyCustomFilters($param, $value);
                 continue;
             }
 
@@ -116,9 +113,9 @@ trait Requestable
 
     /**
      * @param string $attributes
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return $this
      */
-    public function selectFields(string $attributes): Builder
+    public function selectFields(string $attributes): self
     {
         $attrs = explode(',', $attributes);
         $results = [];
@@ -135,9 +132,9 @@ trait Requestable
 
     /**
      * @param string $sortFields
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return $this
      */
-    public function applySorting(string $sortFields): Builder
+    public function applySorting(string $sortFields): self
     {
         $query  = $this->getQuery();
         $fields = explode(',', $sortFields);
@@ -155,7 +152,8 @@ trait Requestable
                 : $field;
             $query = $query->orderBy($field, $orientation);
         }
-        return $query;
+        $this->query = $query;
+        return $this;
     }
 
     /**
@@ -210,15 +208,17 @@ trait Requestable
     /**
      * @param mixed $param
      * @param mixed $value
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return $this
      */
-    public function applyCustomFilters($param, $value): Builder
+    public function applyCustomFilters($param, $value): self
     {
         if (!isset($this->customFilters[$param][$value])) {
             return $this->getQuery();
         }
 
-        return $this->getQuery()->whereRaw($this->customFilters[$param][$value]);
+        $this->query = $this->getQuery()
+            ->whereRaw($this->customFilters[$param][$value]);
+        return $this;
     }
 
     /**

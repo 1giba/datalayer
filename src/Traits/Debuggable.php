@@ -5,12 +5,12 @@ namespace OneGiba\DataLayer\Traits;
 trait Debuggable
 {
     /**
-     * Show SQL
+     * Show SQL from query
      *
-     * @return void
+     * @return string
      */
-    public function debug()
+    public function printSql(): string
     {
-        dd($this->getQuery()->toSql());
+        return $this->getQuery()->toSql();
     }
 }
