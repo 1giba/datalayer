@@ -219,7 +219,7 @@ SELECT * FROM users WHERE id <> 234;
 ```php
 $users = $this->repository
     ->isNotEqual('id', 234)
-    ->get();
+    ->fetch();
 ```
 
 Find by result by multiple fields:
@@ -583,7 +583,7 @@ Without cache:
 ```php
 $users = $this->repository
     ->between('birth_date', '1977-10-02', '1980-05-21')
-    ->get();
+    ->fetch();
 ```
 
 With cache:
@@ -592,7 +592,7 @@ With cache:
 $users = $this->repository
     ->between('birth_date', '1977-10-02', '1980-05-21')
     ->cached() // Add this method to caching results
-    ->get();
+    ->fetch();
 ```
 
 ## License
