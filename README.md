@@ -127,6 +127,12 @@ echo $user->email;
 - changeAttrsParam(string $param): self
 - changeSortParam(string $sort): self
 
+### OneGiba\DataLayer\Traits\Trashable
+
+- addDeletedRecords(): self
+- onlyDeletedRecords(): self
+- restoreDeletedRecords(): self
+
 ## Usage
 
 ### Create a Repository
@@ -635,6 +641,30 @@ To force mass delete:
 $isDeleted = $this->repository
     ->isLessThan('id', 100)
     ->forceDelete(); // returns true
+```
+
+## Soft Delete
+
+Query with deleted records:
+
+```php
+$allUsers = $this->repository
+    ->addDeletedRecords()
+    ->fetch();
+```
+Query **only** with deleted records:
+
+```php
+$someUsers = $this->repository
+    ->onlyDeletedRecords()
+    ->fetch();
+```
+
+Restore deleted records:
+
+```php
+$restoredUsers = $this->repository
+    ->restoreDeletedRecords();
 ```
 
 ## License
