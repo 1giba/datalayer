@@ -67,7 +67,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function findById(int $resourceId)
     {
-        return $this->getQuery()->find($resourceId, $this->selectedFields);
+        $resource = $this->getQuery()->find($resourceId, $this->selectedFields);
+        $this->resetQuery();
+        return $resource;
     }
 
     /**
@@ -83,9 +85,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function first()
     {
-        $results = $this->getQuery()->first();
+        $resource = $this->getQuery()->first();
         $this->resetQuery();
-        return $results;
+        return $resource;
     }
 
     /**
@@ -113,7 +115,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function create(array $fillable)
     {
-        return $this->getQuery()->create($fillable);
+        $resource = $this->getQuery()->create($fillable);
+        $this->resetQuery();
+        return $resource;
     }
 
     /**
@@ -125,6 +129,7 @@ abstract class Repository implements RepositoryInterface
         if ($respource instanceof Model) {
             $resource->fill($fillable)->save();
         }
+        $this->resetQuery();
         return $resource;
     }
 
@@ -133,7 +138,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function delete(int $resourceId): int
     {
-        return $this->getQuery()->destroy($resourceId);
+        $numRows = $this->getQuery()->destroy($resourceId);
+        $this->resetQuery();
+        return $numRows;
     }
 
     /**
@@ -141,8 +148,10 @@ abstract class Repository implements RepositoryInterface
      */
     public function count(): int
     {
-        return $this->getQuery()
-            ->count();
+        $numRows = $this->getQuery()->count();
+        $this->resetQuery();
+        return $numRows;
+
     }
 
     /**
@@ -150,8 +159,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function sum(string $column)
     {
-        return $this->getQuery()
-            ->sum($column);
+        $sum = $this->getQuery()->sum($column);
+        $this->resetQuery();
+        return $sum;
     }
 
     /**
@@ -159,8 +169,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function max(string $column)
     {
-        return $this->getQuery()
-            ->max($column);
+        $max = $this->getQuery()->max($column);
+        $this->resetQuery();
+        return $max;
     }
 
     /**
@@ -168,8 +179,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function min(string $column)
     {
-        return $this->getQuery()
-            ->min($column);
+        $min = $this->getQuery()->min($column);
+        $this->resetQuery();
+        return $min;
     }
 
     /**
@@ -177,8 +189,9 @@ abstract class Repository implements RepositoryInterface
      */
     public function avg(string $column)
     {
-        return $this->getQuery()
-            ->avg($column);
+        $avg = $this->getQuery()->avg($column);
+        $this->resetQuery();
+        return $avg;
     }
 
     /**
