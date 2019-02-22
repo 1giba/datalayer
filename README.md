@@ -104,6 +104,12 @@ echo $user->email;
 - leftJoin(string $table, array $relationships): self
 - with(array $relationships): self
 
+### OneGiba\DataLayer\Traits\Massble
+
+- massUpdate(array $fillable): bool
+- massDelete(): bool
+- forceDelete(): bool
+
 ## Optional Methods
 
 ### OneGiba\DataLayer\Traits\Debuggable
@@ -593,6 +599,42 @@ $users = $this->repository
     ->between('birth_date', '1977-10-02', '1980-05-21')
     ->cached() // Add this method to caching results
     ->fetch();
+```
+
+## Mass Updates
+
+Example of mass update:
+
+```sql
+UPDATE users SET can_drive = true WHERE age > 15
+```
+
+```php
+$isUpdated = $this->repository
+    ->isGreaterThan('age', 15)
+    ->massUpdate(['can_drive' => true]); // returns true
+```
+
+## Mass Deletes
+
+Example of mass delete:
+
+```sql
+DELETE FROM users WHERE id < 100
+```
+
+```php
+$isDeleted = $this->repository
+    ->isLessThan('id', 100)
+    ->massDelete(); // returns true
+```
+
+To force mass delete:
+
+```php
+$isDeleted = $this->repository
+    ->isLessThan('id', 100)
+    ->forceDelete(); // returns true
 ```
 
 ## License

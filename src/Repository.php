@@ -10,12 +10,14 @@ use OneGiba\DataLayer\Contracts\RepositoryInterface;
 use OneGiba\DataLayer\Traits\Searchable;
 use OneGiba\DataLayer\Traits\Conditionable;
 use OneGiba\DataLayer\Traits\Joinable;
+use OneGiba\DataLayer\Traits\Massble;
 
 abstract class Repository implements RepositoryInterface
 {
     use Searchable,
         Conditionable,
-        Joinable;
+        Joinable,
+        Massble;
 
     /**
      * @var \Illuminate\Database\Eloquent\Builder|null
