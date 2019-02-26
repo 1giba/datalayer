@@ -3,6 +3,7 @@
 namespace OneGiba\DataLayer\Traits;
 
 use Closure;
+use DB;
 
 trait Conditionable
 {
@@ -23,8 +24,8 @@ trait Conditionable
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = is_array($value) ?
-            $query->whereIn($column, $value, $operator) :
-            $query->where($column, '=', $value, $operator);
+            $query->whereIn(DB::raw($column), $value, $operator) :
+            $query->where(DB::raw($column), '=', $value, $operator);
         $this->clausules ? $this->clausules = $query  :  $this->query = $query;
 
         return $this;
@@ -42,8 +43,8 @@ trait Conditionable
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = is_array($value) ?
-            $query->whereNotIn($column, $value, $operator) :
-            $query->where($column, '<>', $value, $operator);
+            $query->whereNotIn(DB::raw($column), $value, $operator) :
+            $query->where(DB::raw($column), '<>', $value, $operator);
         $this->clausules ? $this->clausules = $query  :  $this->query = $query;
 
         return $this;
@@ -94,7 +95,7 @@ trait Conditionable
     public function isGreaterThan(string $column, $value, string $operator = 'AND'): self
     {
         $query = $this->clausules ?? $this->getQuery();
-        $query = $query->where($column, '>', $value, $operator);
+        $query = $query->where(DB::raw($column), '>', $value, $operator);
         $this->clausules ? $this->clausules = $query  :  $this->query = $query;
 
         return $this;
@@ -111,7 +112,7 @@ trait Conditionable
     public function isGreaterThanEqual(string $column, $value, string $operator = 'AND'): self
     {
         $query = $this->clausules ?? $this->getQuery();
-        $query = $query->where($column, '>=', $value, $operator);
+        $query = $query->where(DB::raw($column), '>=', $value, $operator);
         $this->clausules ? $this->clausules = $query  :  $this->query = $query;
 
         return $this;
@@ -128,7 +129,7 @@ trait Conditionable
     public function isLessThan(string $column, $value, string $operator = 'AND'): self
     {
         $query = $this->clausules ?? $this->getQuery();
-        $query = $query->where($column, '<', $value, $operator);
+        $query = $query->where(DB::raw($column), '<', $value, $operator);
         $this->clausules ? $this->clausules = $query  :  $this->query = $query;
 
         return $this;
@@ -145,7 +146,7 @@ trait Conditionable
     public function isLessThanEqual(string $column, $value, string $operator = 'AND'): self
     {
         $query = $this->clausules ?? $this->getQuery();
-        $query = $query->where($column, '<=', $value, $operator);
+        $query = $query->where(DB::raw($column), '<=', $value, $operator);
         $this->clausules ? $this->clausules = $query  :  $this->query = $query;
 
         return $this;
@@ -163,7 +164,7 @@ trait Conditionable
     public function between(string $column, $value1, $value2, string $operator = 'AND'): self
     {
         $query = $this->clausules ?? $this->getQuery();
-        $query = $query->whereBetween($column, [$value1, $value2], $operator);
+        $query = $query->whereBetween(DB::raw($column), [$value1, $value2], $operator);
         $this->clausules ? $this->clausules = $query  :  $this->query = $query;
 
         return $this;
