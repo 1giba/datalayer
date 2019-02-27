@@ -206,7 +206,7 @@ abstract class Repository implements RepositoryInterface
         if ($this->query instanceof Builder) {
             $this->query = $this->model->newQuery();
         }
-
+        $this->selectedFields = ['*'];
         return $this;
     }
 }
