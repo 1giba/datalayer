@@ -13,14 +13,14 @@ trait Conditionable
     protected $clausules;
 
     /**
-     * Is equal
+     * Equals
      *
      * @param string $column
      * @param mixed  $value
      * @param string $operator
      * @return $this
      */
-    public function isEqual(string $column, $value, string $operator = 'AND'): self
+    public function equals(string $column, $value, string $operator = 'AND'): self
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = is_array($value) ?
@@ -32,14 +32,14 @@ trait Conditionable
     }
 
     /**
-     * Is not equal
+     * Not equals
      *
      * @param string $column
      * @param mixed  $value
      * @param string $operator
      * @return $this
      */
-    public function isNotEqual(string $column, $value, string $operator = 'AND'): self
+    public function notEquals(string $column, $value, string $operator = 'AND'): self
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = is_array($value) ?
@@ -85,14 +85,14 @@ trait Conditionable
     }
 
     /**
-     * Is greater Than
+     * Greater Than
      *
      * @param string $column
      * @param mixed  $value
      * @param string $operator
      * @return $this
      */
-    public function isGreaterThan(string $column, $value, string $operator = 'AND'): self
+    public function greaterThan(string $column, $value, string $operator = 'AND'): self
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->where(DB::raw($column), '>', $value, $operator);
@@ -102,14 +102,14 @@ trait Conditionable
     }
 
     /**
-     * Is greater than equal
+     * Greater than equal
      *
      * @param string $column
      * @param mixed  $value
      * @param string $operator
      * @return $this
      */
-    public function isGreaterThanEqual(string $column, $value, string $operator = 'AND'): self
+    public function greaterThanEqual(string $column, $value, string $operator = 'AND'): self
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->where(DB::raw($column), '>=', $value, $operator);
@@ -119,14 +119,14 @@ trait Conditionable
     }
 
     /**
-     * Is less than
+     * Less than
      *
      * @param string $column
      * @param mixed  $value
      * @param string $operator
      * @return $this
      */
-    public function isLessThan(string $column, $value, string $operator = 'AND'): self
+    public function lessThan(string $column, $value, string $operator = 'AND'): self
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->where(DB::raw($column), '<', $value, $operator);
@@ -136,14 +136,14 @@ trait Conditionable
     }
 
     /**
-     * Is less than equal
+     * Less than equal
      *
      * @param string $column
      * @param mixed  $value
      * @param string $operator
      * @return $this
      */
-    public function isLessThanEqual(string $column, $value, string $operator = 'AND'): self
+    public function lessThanEqual(string $column, $value, string $operator = 'AND'): self
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->where(DB::raw($column), '<=', $value, $operator);
@@ -233,27 +233,27 @@ trait Conditionable
     }
 
     /**
-     * Or is equal
+     * Or equals
      *
      * @param string $column
      * @param mixed  $value
      * @return $this
      */
-    public function orIsEqual(string $column, $value): self
+    public function orEquals(string $column, $value): self
     {
-        return $this->isEqual($column, $value, 'OR');
+        return $this->equals($column, $value, 'OR');
     }
 
     /**
-     * Or is not equal
+     * Or not equals
      *
      * @param string $column
      * @param mixed  $value
      * @return $this
      */
-    public function orIsNotEqual(string $column, $value): self
+    public function orNotEquals(string $column, $value): self
     {
-        return $this->isNotEqual($column, $value, 'OR');
+        return $this->notEquals($column, $value, 'OR');
     }
 
     /**
@@ -281,51 +281,51 @@ trait Conditionable
     }
 
     /**
-     * Or is greater than
+     * Or greater than
      *
      * @param string $column
      * @param mixed  $value
      * @return $this
      */
-    public function orIsGreaterThan(string $column, $value): self
+    public function orGreaterThan(string $column, $value): self
     {
-        return $this->isGreaterThen($column, $value, 'OR');
+        return $this->greaterThen($column, $value, 'OR');
     }
 
     /**
-     * Or is greater than equal
+     * Or greater than equal
      *
      * @param string $column
      * @param mixed  $value
      * @return $this
      */
-    public function orIsGreaterThanEqual(string $column, $value): self
+    public function orGreaterThanEquals(string $column, $value): self
     {
-        return $this->isGreaterThenEqual($column, $value, 'OR');
+        return $this->greaterThenEqual($column, $value, 'OR');
     }
 
     /**
-     * Or is less than
+     * Or less than
      *
      * @param string $column
      * @param mixed  $value
      * @return $this
      */
-    public function orIsLessThan(string $column, $value): self
+    public function orLessThan(string $column, $value): self
     {
-        return $this->isLessThan($column, $value, 'OR');
+        return $this->lessThan($column, $value, 'OR');
     }
 
     /**
-     * Or is less than equal
+     * Or less than equal
      *
      * @param string $column
      * @param mixed  $value
      * @return $this
      */
-    public function orIsLessThanEqual(string $column, $value): self
+    public function orLessThanEqual(string $column, $value): self
     {
-        return $this->isLessThanEqual($column, $value, 'OR');
+        return $this->lessThanEqual($column, $value, 'OR');
     }
 
     /**

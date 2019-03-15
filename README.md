@@ -81,21 +81,21 @@ echo $user->email;
 
 ### OneGiba\DataLayer\Traits\Conditionable
 
-- isEqual(string, mixed): self
-- isNotEqual(string, mixed): self
+- equals(string, mixed): self
+- notEquals(string, mixed): self
 - like(string, mixed): self
 - notLike(string, mixed): self
-- isGreaterThan(string, mixed): self
-- isGreaterThanEqual(string, mixed): self
-- isLessThan(string, mixed): self
-- isLessThanEqual(string, mixed): self
+- greaterThan(string, mixed): self
+- greaterThanEqual(string, mixed): self
+- lessThan(string, mixed): self
+- lessThanEqual(string, mixed): self
 - between(string, mixed, mixed): self
 - isNull(string): self
 - isNotNull(string): self
 - clausules(closure): self
 - orClausules(closure): self
 
-*PS:* All clausules methods have a `or` implementation with prefix `or`. Ex.: orEqual(), orIsNull(), etc.
+*PS:* All clausules methods have a `or` implementation with prefix `or`. Ex.: orEquals(), orIsNull(), etc.
 
 ### OneGiba\DataLayer\Traits\Joinable
 
@@ -212,7 +212,7 @@ SELECT * FROM users WHERE name = 'Joe Doe' LIMIT 1
 
 ```php
 $users = $this->repository
-    ->isEqual('name','Joe Doe')
+    ->equals('name','Joe Doe')
     ->first();
 ```
 
@@ -224,7 +224,7 @@ SELECT * FROM users WHERE id <> 234;
 
 ```php
 $users = $this->repository
-    ->isNotEqual('id', 234)
+    ->notEquals('id', 234)
     ->fetch();
 ```
 
@@ -237,8 +237,8 @@ ORDER BY id
 
 ```php
 $users = $this->repository
-    ->isEqual('email','joedoe@gmail.com')
-    ->isGreaterThan('role_id', 1)
+    ->equals('email','joedoe@gmail.com')
+    ->greaterThan('role_id', 1)
     ->sortAscending('id')
     ->fetch();
 ```
@@ -251,7 +251,7 @@ SELECT * FROM users WHERE id IN (1, 2, 3, 4, 5) ORDER BY id DESC
 
 ```php
 $users = $this->repository
-    ->isEqual('id', [1, 2, 3, 4, 5,])
+    ->equals('id', [1, 2, 3, 4, 5,])
     ->sortDesceding('id')
     ->fetch();
 ```
@@ -266,8 +266,8 @@ OR email LIKE '%@gmail.com'
 ```php
 $users = $this->repository
     ->clausules(function ($repository) {
-        return $repository->isGreaterThan(18)
-            ->isEqual('genre', 'M');
+        return $repository->greaterThan(18)
+            ->equals('genre', 'M');
     })
     ->orLike('email', '%gmail.com')
     ->fetch();
@@ -286,7 +286,7 @@ $users = $this->repository
         return $repository->like('%oe%')
             ->orLike('email', '%gmail%');
     })
-    ->isEqual('active', 1)
+    ->equals('active', 1)
     ->fetch();
 ```
 
@@ -301,8 +301,8 @@ ORDER BY name, email DESC
 ```php
 $users = $this->repository
     ->clausules(function ($repository) {
-        return $repository->isGreaterThan(18)
-            ->isEqual('genre', 'M');
+        return $repository->greaterThan(18)
+            ->equals('genre', 'M');
     })
     ->orClausules(function ($repository) {
         return $repository->like('email', '%gmail.com')
@@ -611,7 +611,7 @@ UPDATE users SET can_drive = true WHERE age > 15
 
 ```php
 $isUpdated = $this->repository
-    ->isGreaterThan('age', 15)
+    ->greaterThan('age', 15)
     ->massUpdate(['can_drive' => true]); // returns true
 ```
 
@@ -625,7 +625,7 @@ DELETE FROM users WHERE id < 100
 
 ```php
 $isDeleted = $this->repository
-    ->isLessThan('id', 100)
+    ->lessThan('id', 100)
     ->massDelete(); // returns true
 ```
 
@@ -633,7 +633,7 @@ To force mass delete:
 
 ```php
 $isDeleted = $this->repository
-    ->isLessThan('id', 100)
+    ->lessThan('id', 100)
     ->forceDelete(); // returns true
 ```
 
