@@ -128,7 +128,7 @@ abstract class Repository implements RepositoryInterface
     public function update(array $fillable, int $resourceId)
     {
         $resource = $this->getQuery()->find($resourceId);
-        if ($respource instanceof Model) {
+        if ($resource instanceof Model) {
             $resource->fill($fillable)->save();
         }
         $this->resetQuery();
@@ -140,9 +140,7 @@ abstract class Repository implements RepositoryInterface
      */
     public function delete(int $resourceId): int
     {
-        $numRows = $this->getQuery()->destroy($resourceId);
-        $this->resetQuery();
-        return $numRows;
+        return $this->model->destroy($resourceId);
     }
 
     /**
