@@ -38,11 +38,11 @@ trait WithCachingMethods
                 $this->generateFetchAllHash(),
                 $this->getExpirationTime(),
                 function() use ($selectedFields) {
-                    return parent::all($selectedFields);
+                    return parent::fetchAll($selectedFields);
                 }
             );
         }
-        return parent::all($selectedFields);
+        return parent::fetchAll($selectedFields);
     }
 
     /**
