@@ -101,11 +101,11 @@ trait Requestable
                     $this->like($param, '%' . $value . '%');
                     continue;
                 }
-                $this->isEqual($param, $value);
+                $this->equals($param, $value);
                 continue;
             }
 
-            $this->isEqual($param, $values);
+            $this->equals($param, $values);
         }
 
         return $this;
