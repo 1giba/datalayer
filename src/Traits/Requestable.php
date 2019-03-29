@@ -71,6 +71,10 @@ trait Requestable
                 continue;
             }
 
+            if (is_array($value) === true) {
+                $value = implode(',', $value);
+            }
+
             if ($param === $this->attributesParam) {
                 $this->selectFields($value);
                 continue;
