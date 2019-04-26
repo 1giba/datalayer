@@ -46,6 +46,11 @@ trait Requestable
     protected $customFilters = [];
 
     /**
+     * @var string
+     */
+    protected $methodForPartialSearch = 'like';
+
+    /**
      * Filtros com LIKE
      *
      * @param string $attribute
@@ -102,7 +107,7 @@ trait Requestable
             $values = explode(',', $value);
             if (count($values) === 1) {
                 if (in_array($param, $this->partials)) {
-                    $this->like($param, '%' . $value . '%');
+                    $this->{$methodForPartialSearch}($param, '%' . $value . '%');
                     continue;
                 }
                 $this->equals($param, $value);
@@ -246,4 +251,18 @@ trait Requestable
 
         return $this;
     }
+
+    /**
+     * Change method of partial search
+     *
+     * @param string $methodName
+     * @return $this
+     */
+    public function changeMethodOfPartialSearch(string $methodName): self
+    {
+        $this->methodForPartialSearch = $methodName;
+
+        return $this;
+    }
+
 }

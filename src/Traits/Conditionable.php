@@ -26,7 +26,7 @@ trait Conditionable
         $query = is_array($value) ?
             $query->whereIn(DB::raw($column), $value, $operator) :
             $query->where(DB::raw($column), '=', $value, $operator);
-        $this->clausules ? $this->clausules = $query  :  $this->query = $query;
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
 
         return $this;
     }
@@ -45,7 +45,7 @@ trait Conditionable
         $query = is_array($value) ?
             $query->whereNotIn(DB::raw($column), $value, $operator) :
             $query->where(DB::raw($column), '<>', $value, $operator);
-        $this->clausules ? $this->clausules = $query  :  $this->query = $query;
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
 
         return $this;
     }
@@ -62,7 +62,7 @@ trait Conditionable
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->where($column, 'LIKE', $value, $operator);
-        $this->clausules ? $this->clausules = $query  :  $this->query = $query;
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
 
         return $this;
     }
@@ -79,7 +79,7 @@ trait Conditionable
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->where($column, 'NOT LIKE', $value, $operator);
-        $this->clausules ? $this->clausules = $query  :  $this->query = $query;
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
 
         return $this;
     }
@@ -96,7 +96,7 @@ trait Conditionable
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->where(DB::raw($column), '>', $value, $operator);
-        $this->clausules ? $this->clausules = $query  :  $this->query = $query;
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
 
         return $this;
     }
@@ -113,7 +113,7 @@ trait Conditionable
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->where(DB::raw($column), '>=', $value, $operator);
-        $this->clausules ? $this->clausules = $query  :  $this->query = $query;
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
 
         return $this;
     }
@@ -130,7 +130,7 @@ trait Conditionable
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->where(DB::raw($column), '<', $value, $operator);
-        $this->clausules ? $this->clausules = $query  :  $this->query = $query;
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
 
         return $this;
     }
@@ -147,7 +147,7 @@ trait Conditionable
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->where(DB::raw($column), '<=', $value, $operator);
-        $this->clausules ? $this->clausules = $query  :  $this->query = $query;
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
 
         return $this;
     }
@@ -165,7 +165,7 @@ trait Conditionable
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->whereBetween(DB::raw($column), [$value1, $value2], $operator);
-        $this->clausules ? $this->clausules = $query  :  $this->query = $query;
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
 
         return $this;
     }
@@ -181,7 +181,7 @@ trait Conditionable
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->whereNull($column, $operator);
-        $this->clausules ? $this->clausules = $query  :  $this->query = $query;
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
 
         return $this;
     }
@@ -197,7 +197,7 @@ trait Conditionable
     {
         $query = $this->clausules ?? $this->getQuery();
         $query = $query->whereNotNull($column, $operator);
-        $this->clausules ? $this->clausules = $query  :  $this->query = $query;
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
 
         return $this;
     }
@@ -361,5 +361,39 @@ trait Conditionable
     public function orIsNotNull(string $column): self
     {
         return $this->isNotNull($column, 'OR');
+    }
+
+    /**
+     * ILike
+     *
+     * @param string $column
+     * @param mixed  $value
+     * @param string $operator
+     * @return $this
+     */
+    public function iLike(string $column, $value, string $operator = 'AND'): self
+    {
+        $query = $this->clausules ?? $this->getQuery();
+        $query = $query->where($column, 'ILIKE', $value, $operator);
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
+
+        return $this;
+    }
+
+    /**
+     * Not ilike
+     *
+     * @param string $column
+     * @param mixed  $value
+     * @param string $operator
+     * @return $this
+     */
+    public function notILike(string $column, $value, string $operator = 'AND'): self
+    {
+        $query = $this->clausules ?? $this->getQuery();
+        $query = $query->where($column, 'NOT ILIKE', $value, $operator);
+        $this->clausules ? $this->clausules = $query : $this->query = $query;
+
+        return $this;
     }
 }

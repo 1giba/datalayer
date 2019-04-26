@@ -94,6 +94,8 @@ echo $user->email;
 - isNotNull(string): self
 - clausules(closure): self
 - orClausules(closure): self
+- iLike(string, mixed): self
+- notILike(string, mixed): self
 
 *PS:* All clausules methods have a `or` implementation with prefix `or`. Ex.: orEquals(), orIsNull(), etc.
 
@@ -118,14 +120,15 @@ echo $user->email;
 
 ### OneGiba\DataLayer\Traits\Requestable
 
-- addPartialSearch(string $attribute): self
-- queryString(array $params = []): self
-- allowedFilters(array $fields): self
-- allowedSorts(array $fields): self
-- refer(string $alias, string $fieldname): self
-- addCustomFilters(array $filters): self
-- changeAttrsParam(string $param): self
-- changeSortParam(string $sort): self
+- addPartialSearch(string): self
+- queryString(array): self
+- allowedFilters(array ): self
+- allowedSorts(array): self
+- refer(string, string): self
+- addCustomFilters(array): self
+- changeAttrsParam(string): self
+- changeSortParam(string): self
+- changeMethodForPartialSearch(string):self
 
 ## Usage
 
