@@ -128,7 +128,7 @@ echo $user->email;
 - addCustomFilters(array): self
 - changeAttrsParam(string): self
 - changeSortParam(string): self
-- changeMethodForPartialSearch(string):self
+- changeMethodOfPartialSearch():self
 
 ## Usage
 

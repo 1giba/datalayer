@@ -107,7 +107,7 @@ trait Requestable
             $values = explode(',', $value);
             if (count($values) === 1) {
                 if (in_array($param, $this->partials)) {
-                    $this->{$methodForPartialSearch}($param, '%' . $value . '%');
+                    $this->{$this->methodForPartialSearch}($param, '%' . $value . '%');
                     continue;
                 }
                 $this->equals($param, $value);
@@ -255,12 +255,11 @@ trait Requestable
     /**
      * Change method of partial search
      *
-     * @param string $methodName
      * @return $this
      */
-    public function changeMethodOfPartialSearch(string $methodName): self
+    public function changeMethodOfPartialSearch(): self
     {
-        $this->methodForPartialSearch = $methodName;
+        $this->methodForPartialSearch = 'iLike';
 
         return $this;
     }
