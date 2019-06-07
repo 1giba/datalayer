@@ -28,7 +28,7 @@ interface RepositoryInterface
      *
      * @return mixed
      */
-    public function first();
+    public function fetchFirst();
 
     /**
      * Get collection

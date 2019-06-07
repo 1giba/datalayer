@@ -85,7 +85,7 @@ abstract class Repository implements RepositoryInterface
     /**
      * { @inheritdoc }
      */
-    public function first()
+    public function fetchFirst()
     {
         $resource = $this->getQuery()->first();
         $this->resetQuery();
@@ -206,5 +206,16 @@ abstract class Repository implements RepositoryInterface
         }
         $this->selectedFields = ['*'];
         return $this;
+    }
+
+    /**
+     * Delete by ids
+     *
+     * @param array $resourceIds
+     * @return int
+     */
+    public function deleteAll(array $resourceId): int
+    {
+        return $this->model->destroy($resourceIds);
     }
 }

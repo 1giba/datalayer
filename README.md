@@ -57,12 +57,13 @@ echo $user->email;
 
 - findById(int $resourceId): ?\Illuminate\Database\Eloquent\Model
 - fetchAll(): \Illuminate\Support\Collection
-- fisrt(): mixed
+- fetchFisrt(): mixed
 - fetch(): \Illuminate\Support\Collection
 - paginate(int $perPage = 50): \Illuminate\Pagination\LengthAwarePaginator;
 - create(array $fillable): mixed
 - update(array $fillable, int $resourceId): mixed
 - delete(int $resourceId): int;
+- deleteAll(array $resourceIds): int;
 - count(): int;
 - sum(string $column): mixed;
 - max(string $column): mixed;
@@ -216,7 +217,7 @@ SELECT * FROM users WHERE name = 'Joe Doe' LIMIT 1
 ```php
 $users = $this->repository
     ->equals('name','Joe Doe')
-    ->first();
+    ->fetchFirst();
 ```
 
 Find all except one:
