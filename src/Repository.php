@@ -214,7 +214,7 @@ abstract class Repository implements RepositoryInterface
      * @param array $resourceIds
      * @return int
      */
-    public function deleteAll(array $resourceId): int
+    public function deleteAll(array $resourceIds): int
     {
         return $this->model->destroy($resourceIds);
     }
